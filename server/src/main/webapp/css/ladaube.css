@@ -1,0 +1,132 @@
+.x-list-over {
+    background-color: #DFE8F6;
+    text-decoration: underline;
+}
+
+.x-list-body {
+    font: 11px arial,tahoma,helvetica,sans-serif;
+}
+
+div#banner, div#loginBox {
+    font-family: tahoma, arial, sans-serif;
+}
+
+div#loginBox {
+    font-size: 0.9em;
+    padding-top: 20px;
+    text-align: right;
+    padding-right: 5px;
+}
+
+span.loginName {
+    font-weight: bold;
+}
+
+.x-panel-body {
+    background-color: #FFFFFF;
+    border: none;
+}
+
+#upload {
+    font-family: arial, tahoma, helvetica, sans-serif;
+    font-size: 11px;
+    padding: 5px;
+}
+
+#upload > p {
+    padding-bottom: 5px;
+}
+
+.home-icon {
+    background-image: url(../images/home-icon.png);
+}
+
+.playlists-icon {
+    background-image: url(../images/playlists-icon.png);
+}
+
+.buddies-icon {
+    background-image: url(../images/buddies-icon.png);
+}
+
+.upload-icon {
+    background-image: url(../images/upload-icon.png);
+}
+
+/* borrowed from examples.css */
+
+body {
+    font-family: helvetica, tahoma, verdana, sans-serif;
+    padding: 20px;
+    padding-top: 32px;
+    font-size: 13px;
+    background-color: #fff !important;
+}
+
+.msg .x-box-mc {
+    font-size: 14px;
+}
+
+#msg-div {
+    position: absolute;
+    left: 35%;
+    top: 10px;
+    width: 250px;
+    z-index: 20000;
+}
+
+#player {
+    position: absolute;
+    top: 10px;
+    left: 220px;
+}
+
+#song-details {
+    position: absolute;
+    left: 400px;
+    top: 10px;
+    width: 400px;
+    font-size: 8pt;
+}
+
+#song-name {
+    font-weight: bold;
+}
+
+#track-image {
+    float: left;
+    height: 42px;
+    width: 42px;
+    margin-right: 8px;
+}
+
+#logo {
+    background-image: url("../images/headphones.jpg");
+    background-repeat: no-repeat;
+    height: 60px;
+    padding-left: 50px;
+    padding-top: 5px;
+    background-position: 0 5px;
+}
+
+#logoSlogan {    
+    position: absolute;
+    left: 54px;
+    top: 35px;
+    font-size: 9pt;
+}
+
+#logoName {
+    height: 35px;
+    background-image: url("../images/ladaube-neon.png");
+    background-repeat: no-repeat;
+}
+
+.tracks-loaded {
+    background-image: url(../images/home-icon.png);
+}
+
+.tracks-loading {
+    background-image: url(../images/playlists-icon.png);
+}
+

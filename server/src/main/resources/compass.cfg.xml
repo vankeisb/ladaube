@@ -1,0 +1,19 @@
+<compass-core-config xmlns="http://www.compass-project.org/schema/core-config"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.compass-project.org/schema/core-config
+           http://www.compass-project.org/schema/compass-core-config-2.2.xsd">
+
+   <compass name="default">
+      <connection>
+          <file path="/tmp/ladaube-index"/>
+      </connection>
+
+      <mappings>
+          <class name="com.ladaube.model.User" />
+          <class name="com.ladaube.model.Track" />
+          <class name="com.ladaube.model.Buddies" />
+          <class name="com.ladaube.model.Playlist" />
+      </mappings>
+
+   </compass>
+</compass-core-config>

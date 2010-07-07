@@ -1,0 +1,12 @@
+LaDaube TODO list
+
+* song genre issue (only numbers yet)
+* player : show current song in grid
+* permalinks
+* buddies invitations
+* search/filter in playlists
+* favicon
+* prev track/next track buttons
+* per-user sharing (all buddies or specified list)
+* get a better flash player : this one sucks
+* ajaxify upload in web ui

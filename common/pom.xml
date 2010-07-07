@@ -1,0 +1,12 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.ladaube</groupId>
+		<artifactId>ladaube-parent</artifactId>
+		<version>3.0</version>
+	</parent>
+    <artifactId>ladaube-common</artifactId>
+    <name>ladaube-common</name>
+    <packaging>jar</packaging>	
+</project>

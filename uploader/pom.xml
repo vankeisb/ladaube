@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ladaube</groupId>
+        <artifactId>ladaube-parent</artifactId>
+        <version>3.0</version>
+    </parent>
+    <artifactId>ladaube-uploader</artifactId>
+    <name>ladaube-uploader</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>com.ladaube</groupId>
+            <artifactId>ladaube-common</artifactId>
+            <version>3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <!--dependency>
+            <groupId>net.sf.squirrel-sql.thirdparty-non-maven</groupId>
+            <artifactId>substance</artifactId>
+            <version>5.2_01</version>
+        </dependency-->
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>com.ladaube.upload.UploaderUI</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo.webstart</groupId>
+                <artifactId>webstart-maven-plugin</artifactId>
+                <version>1.0-beta-1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jnlp-inline</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <dependencies>
+                        <excludes>
+                            <!--exclude>commons-lang:commons-lang</exclude-->
+                        </excludes>
+
+                    </dependencies>
+
+                    <resourcesDirectory>${project.basedir}/src/jnlp/resources</resourcesDirectory>
+
+                    <jnlp>
+                        <!-- we play with the resource path and template relative path to test MOJO-391 -->
+                        <inputTemplateResourcePath>${project.basedir}/src/</inputTemplateResourcePath>
+                        <inputTemplate>jnlp/template.vm</inputTemplate>
+                        <outputFile>ladaube-uploader.jnlp</outputFile>
+                        <mainClass>com.ladaube.upload.UploaderUI</mainClass>
+                    </jnlp>
+
+                    <!-- SIGNING -->
+                    <!-- defining this will automatically sign the jar and its dependencies -->
+                    <sign>
+                        <keystore>/tmp/keystore</keystore>
+
+                        <keypass>m2m2m2</keypass>
+                        <storepass>m2m2m2</storepass>
+                        <!--sigfile>m2m2m2</sigfile-->
+                        <alias>alias</alias>
+                        <validity>180</validity>
+
+                        <dnameCn>www.ladaube.com</dnameCn>
+
+                        <dnameOu>None</dnameOu>
+                        <dnameO>LaDaube Inc.</dnameO>
+                        <dnameL>Nice</dnameL>
+                        <dnameC>France</dnameC>
+                        <verify>true</verify>
+                        <keystoreConfig>
+                            <delete>true</delete>
+                            <gen>true</gen>
+                        </keystoreConfig>
+                    </sign>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
