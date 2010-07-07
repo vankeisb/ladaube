@@ -35,16 +35,16 @@ public class ListTracks extends BaseAction {
   }
 
   Resolution displayJson() {
-    if (query==null && playlistId==null) {
-      Resolution res = null;
-      LaDaube.get().doInSession{ LaDaubeSession s ->
-        User buddy = buddyId==null ? user : s.getUser(buddyId)
-        boolean includeBuddies = buddy.id==user.id
-        InputStream is = s.getUserTracksStreamed(buddy, includeBuddies, start, limit, sort, dir);
-        res = new StreamingResolution('text/json', is);
-      }
-      return res;
-    } else {
+//    if (query==null && playlistId==null) {
+//      Resolution res = null;
+//      LaDaube.get().doInSession{ LaDaubeSession s ->
+//        User buddy = buddyId==null ? user : s.getUser(buddyId)
+//        boolean includeBuddies = buddy.id==user.id
+//        InputStream is = s.getUserTracksStreamed(buddy, includeBuddies, start, limit, sort, dir);
+//        res = new StreamingResolution('text/json', is);
+//      }
+//      return res;
+//    } else {
       long startTime = System.currentTimeMillis()
       JsonUtil u = new JsonUtil()
       Long totalLen = null
@@ -67,7 +67,7 @@ public class ListTracks extends BaseAction {
       long elapsed = System.currentTimeMillis() - startTime
       logger.debug("List tracks took $elapsed ms")
       return u.resolution(u.tracksToJson(tracks, false, totalLen).toString())
-    }
+//    }
   }
 
 

@@ -5,16 +5,20 @@ function(head, req) {
         }
     });
     send('{"totalCount":' + head.total_rows + ',"data":[');
-    var row = getRow();
+    var row = getRow(), doc, buf='';
     while (row != null) {
-        var doc = row.doc;
+        doc = row.doc;
         // doc is null if include_docs not provided
         if (doc) {
-            send(JSON.stringify(doc));
+            buf += JSON.stringify(doc);
         }
         row = getRow();
         if (row) {
-            send(',');
+            buf += ',';
+        }
+        if (buf.length>50000) {
+            send(buf);
+            buf = '';
         }
     }
     send(']}');
