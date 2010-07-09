@@ -236,7 +236,7 @@
             tracksGrid.on('rowdblclick', function(grid, index, e) {
                 // build playlist (list of track Ids)
                 var playlist = [];
-                var recNum = 0;
+                var recNum = store.bufferRange[0];
                 store.each(function(rec) {
                     if (recNum >= index) {
                         playlist.push(rec.data.id);
