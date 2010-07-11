@@ -7,14 +7,13 @@ import net.sourceforge.stripes.action.DontValidate
 import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.FileBean
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.SimpleMessage
 import com.ladaube.util.auth.RequiresAuthentication
-import net.sourceforge.stripes.action.StreamingResolution
+
 import com.ladaube.modelcouch.Track
-import com.ladaube.modelcouch.LaDaubeSession
-import org.ektorp.Attachment
+import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/image/{track}')
 @RequiresAuthentication
@@ -52,14 +51,7 @@ public class TrackImage extends BaseAction {
 
   @DefaultHandler
   Resolution stream() {
-    Attachment a = LaDaube.get().doInSession { s-> s.couchDb.getAttachment(track.id, 'img-' + track.id) }
-    InputStream is
-    if (a) {
-      is = a.getData()
-    } else {
-      is = getClass().getResourceAsStream("/unknown.jpg")
-    }
-    return new StreamingResolution('image/jpeg', is)
+    return null
   }
 
 }

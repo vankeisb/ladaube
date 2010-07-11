@@ -1,10 +1,10 @@
 package com.ladaube.util.stripes
 
 import net.sourceforge.stripes.validation.ValidationError
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import com.ladaube.modelcouch.Track
 import net.sourceforge.stripes.validation.TypeConverter
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 
 public class TrackTypeConverter implements TypeConverter<Track> {
 

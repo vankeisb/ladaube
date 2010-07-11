@@ -3,11 +3,11 @@ package com.ladaube.actions
 import net.sourceforge.stripes.action.UrlBinding
 import net.sourceforge.stripes.action.Resolution
 
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import net.sourceforge.stripes.action.RedirectResolution
 import com.ladaube.modelcouch.Track
 import com.ladaube.modelcouch.User
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/populate')
 public class Populate extends BaseAction {

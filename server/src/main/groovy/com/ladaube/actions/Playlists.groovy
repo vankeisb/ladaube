@@ -5,14 +5,14 @@ import com.ladaube.util.auth.RequiresAuthentication
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.DefaultHandler
 import net.sourceforge.stripes.action.ForwardResolution
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
 import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.action.RedirectResolution
 import com.ladaube.modelcouch.Playlist
 import com.ladaube.modelcouch.Track
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/playlists')
 @RequiresAuthentication

@@ -1,9 +1,10 @@
-package com.ladaube.modelcouch
-
-import com.ladaube.util.IteratorWithLength
-import org.ektorp.ViewQuery
+package com.ladaube.model
 
 class LadaubeSessionTest extends GroovyTestCase {
+
+  protected void setUp() {
+    cleanup()
+  }
 
   protected void tearDown() {
     cleanup()
@@ -20,25 +21,26 @@ class LadaubeSessionTest extends GroovyTestCase {
     def time = System.currentTimeMillis()
     String u1 = "remi" + time
     String u2 = "alex" + time
-    User remi = s.createUser(u1, u1)
-    User alex = s.createUser(u2, u2)
-    Buddies buddies = s.makeBuddies(remi, alex)
+    def remi = s.createUser(u1, u1)
+    def alex = s.createUser(u2, u2)
+    s.makeBuddies(remi, alex)
     InputStream is = getClass().getResourceAsStream('/Someone New.mp3')
 
-    Track track = s.createTrack(remi, is, 'someone.mp3')
+    def track = s.createTrack(remi, is, 'someone.mp3')
 
     // list buddies
     def remiBuddies = s.getBuddies(remi)
     assert remiBuddies.size() == 1
 
     // list tracks
-    IteratorWithLength<Track> remiTracks = s.getUserTracks(remi, false, null)
-    assert remiTracks.length() == 1
+    def remiTracks = s.getUserTracks(remi, false, null)
+    assert remiTracks.size() == 1
 
     // make sure our track has an attachment
-    Track t = remiTracks.next()
+    def t = remiTracks[0]
     assert t
-    assert t.getAttachments().size() == 1
+    // TODO
+    // assert t.getAttachments().size() == 1
   }
 
   void testCreateReadUser() {
@@ -46,22 +48,22 @@ class LadaubeSessionTest extends GroovyTestCase {
     LaDaubeSession s = getLadaubeSession()
 
     // create user
-    User u = s.createUser('remi', 'remi');
+    def u = s.createUser('remi', 'remi');
     assert u != null
-    assert u.id == 'remi'
+    assert u.username == 'remi'
 
     // retrieve
     u = s.getUser('remi')
     assert u != null
-    assert u.id == 'remi'
+    assert u.username == 'remi'
   }
 
   void testUserBuddies() {
     // create users and assert they're not buddies
     LaDaubeSession session = getLadaubeSession()
 
-    User remi = session.createUser('remi', 'remi')
-    User alex = session.createUser('alex', 'alex')
+    def remi = session.createUser('remi', 'remi')
+    def alex = session.createUser('alex', 'alex')
     assert !session.checkBuddies(remi, alex)
 
     // make buddies
@@ -76,30 +78,30 @@ class LadaubeSessionTest extends GroovyTestCase {
     alex = session.getUser('alex')
     assert session.checkBuddies(remi, alex)
     assert session.checkBuddies(alex, remi)
-    List<User> buddies = session.getBuddies(remi)
+    def buddies = session.getBuddies(remi)
     assert buddies.size()==1
-    User buddy = buddies[0]
-    assert buddy.id == alex.id
+    def buddy = buddies[0]
+    assert buddy.username == alex.username
   }
 
   void testCreateReadTrack() {
     // create a user for the sake of testing
-    User u = ladaubeSession.createUser('remi','remi')
+    def u = ladaubeSession.createUser('remi','remi')
     assert u != null
 
     // Create the track
     InputStream is = getClass().getResourceAsStream('/Someone New.mp3')
-    Track t = ladaubeSession.createTrack(u, is, 'Someone New')
+    def t = ladaubeSession.createTrack(u, is, 'Someone New')
     assert t!=null
     assert t.name == 'Someone New'
-    assert t.userId == u.id
+    assert t.userId == u.username
 
     // try to find the track
-    t = ladaubeSession.getTrackById(t.id)
+    t = ladaubeSession.db.tracks.findOne()
     assert t!=null
     assert t.name == 'Someone New'
-    assert t.userId == u.id
-    assert t.attachments.size() == 1
+    assert t.userId == u.username
+// TODO    assert t.attachments.size() == 1
   }
 
   void testGetTracksForUserNoBuddiesNoQuery() {
@@ -107,19 +109,19 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     // obtain the tracks for the user
     LaDaubeSession s = getLadaubeSession()
-    User u = s.getUser('remi')
-    IteratorWithLength<Track> userTracks = s.getUserTracks(u, false, null)
+    def u = s.getUser('remi')
+    def userTracks = s.getUserTracks(u, false, null)
     assert userTracks != null
-    assert userTracks.length()==1
-    Track t = userTracks.next()
+    assert userTracks.size()==1
+    def t = userTracks[0]
     assert t.name == 'Someone New'
-    assert t.userId == u.id
+    assert t.userId == u.username
 
     // try for alex as well
     u = s.getUser('alex')
     userTracks = s.getUserTracks(u, false, null)
     assert userTracks != null
-    assert userTracks.length()==2
+    assert userTracks.size()==2
   }
   
   void testGetTracksForUserNoBuddiesQuery() {
@@ -127,13 +129,13 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     LaDaubeSession s = getLadaubeSession()
     // obtain the tracks for the user
-    User u = s.getUser('alex')
-    IteratorWithLength<Track> userTracks = s.getUserTracks(u, false, 'Believe')
+    def u = s.getUser('alex')
+    def userTracks = s.getUserTracks(u, false, 'Believe')
     assert userTracks != null
-    assert userTracks.length()==1
-    Track t = userTracks.next()
+    assert userTracks.size()==1
+    def t = userTracks[0]
     assert t.name == 'Believe It'
-    assert t.userId == u.id
+    assert t.userId == u.username
   }
 
   void testGetTracksForUserBuddiesNoQuery() {
@@ -141,19 +143,18 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     LaDaubeSession s = getLadaubeSession()
     // obtain the tracks for the user
-    User remi = s.getUser('remi')
-    User alex = s.getUser('alex')
-    IteratorWithLength<Track> userTracks = s.getUserTracks(remi, true, null)
+    def remi = s.getUser('remi')
+    def alex = s.getUser('alex')
+    def userTracks = s.getUserTracks(remi, true, null)
     assert userTracks != null
-    assert userTracks.length()==3
-    while (userTracks.hasNext()) {
-      Track t = userTracks.next()
+    assert userTracks.size()==3
+    userTracks.each { t ->
       if (t.name=='Someone New') {
-        assert t.userId==remi.id
+        assert t.userId==remi.username
       } else if (t.name=='Personal Possessions') {
-        assert t.userId==alex.id
+        assert t.userId==alex.username
       } else if (t.name=='Believe It') {
-        assert t.userId==alex.id
+        assert t.userId==alex.username
       } else {
         fail("track should not have been returned : $t")
       }
@@ -165,13 +166,13 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     LaDaubeSession s = getLadaubeSession()
     // obtain the tracks for the user
-    User remi = s.getUser('remi')
-    User alex = s.getUser('alex')
-    IteratorWithLength<Track> userTracks = s.getUserTracks(remi, true, 'Believe')
+    def remi = s.getUser('remi')
+    def alex = s.getUser('alex')
+    def userTracks = s.getUserTracks(remi, true, 'Believe')
     assert userTracks != null
-    assert userTracks.length()==1
-    Track t = userTracks.next()
-    assert t.userId == alex.id
+    assert userTracks.size()==1
+    def t = userTracks[0]
+    assert t.userId == alex.username
     assert t.name == 'Believe It'
   }
 
@@ -179,8 +180,8 @@ class LadaubeSessionTest extends GroovyTestCase {
     createTracksAndUsers()
     // make a buddy for alex but don't add tracks to him
     LaDaubeSession s = getLadaubeSession()
-    User flow = s.createUser('flow', 'flow')
-    User alex = s.getUser('alex')
+    def flow = s.createUser('flow', 'flow')
+    def alex = s.getUser('alex')
     s.makeBuddies(flow, alex)
     assert s.checkBuddies(alex, flow)
     assert s.getUserTracks(alex, false, null).size()
@@ -201,21 +202,23 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     // assert flow doesn't access remi's tracks
     flow = s.getUser('flow')
-    userTracks = s.getUserTracks(flow, true, 'Someone')
-    assert userTracks.size() == 0
+    userTracks = s.getUserTracks(flow, true, null)
+    userTracks.each { t ->
+      assert t.userId != 'remi'
+    }
   }
 
   void testCreatePlaylist() {
     createTracksAndUsers()
 
     LaDaubeSession s = getLadaubeSession()
-    User remi = s.getUser('remi')
-    s.createPlaylist(remi, 'funky stuff')
+    def remi = s.getUser('remi')
+    def p = s.createPlaylist(remi, 'funky stuff')
 
     remi = s.getUser('remi')
-    IteratorWithLength<Playlist> playlists = s.getPlaylists(remi)
-    assert playlists.length() == 1
-    Playlist playlist = playlists.next()
+    def playlists = s.getPlaylists(remi)
+    assert playlists.size() == 1
+    def playlist = playlists[0]
     assert playlist.name == 'funky stuff'
   }
 
@@ -223,37 +226,38 @@ class LadaubeSessionTest extends GroovyTestCase {
     createTracksAndUsers()
 
     LaDaubeSession s = getLadaubeSession()
-    User remi = s.getUser('remi')
-    Playlist p = s.createPlaylist(remi, 'funky stuff')
-    IteratorWithLength<Track> tracks = s.getTracksInPlaylist(p)
+    def remi = s.getUser('remi')
+    def p = s.createPlaylist(remi, 'funky stuff')
+    def tracks = s.getTracksInPlaylist(p)
     assert tracks!=null
-    assert tracks.length()==0
+    assert tracks.size()==0
 
-    IteratorWithLength<Track> remiTracks = s.getUserTracks(remi, false, null)
-    assert remiTracks.length() == 1
-    Track t = remiTracks.next()
+    def remiTracks = s.getUserTracks(remi, false, null)
+    assert remiTracks.size() == 1
+    def t = remiTracks[0]
     assert t
     String trackName = t.name
+    p = s.getPlaylists(remi)[0]
     s.addTrackToPlaylist(t, p)
 
     remi = s.getUser('remi')
-    IteratorWithLength playlists = s.getPlaylists(remi)
+    def playlists = s.getPlaylists(remi)
     assert playlists!=null
-    assert playlists.length() == 1
-    p = playlists.next()
+    assert playlists.size() == 1
+    p = playlists[0]
     assert p.name == 'funky stuff'
     tracks = s.getTracksInPlaylist(p)
     assert tracks!=null
-    assert tracks.length()==1
-    assert tracks.next().name == trackName
+    assert tracks.size()==1
+    assert tracks[0].name == trackName
   }
 
   void testDeletePlaylist() {
     createTracksAndUsers()
 
     LaDaubeSession s = getLadaubeSession()
-    User remi = s.getUser('remi')
-    Playlist pl = s.createPlaylist(remi, 'test playlist')
+    def remi = s.getUser('remi')
+    def pl = s.createPlaylist(remi, 'test playlist')
     assert pl
     assert pl.name == 'test playlist'
 
@@ -292,35 +296,35 @@ class LadaubeSessionTest extends GroovyTestCase {
 
     // create a playlist for testing
     LaDaubeSession s = getLadaubeSession()
-      User remi = s.getUser('remi')
-    Playlist pl = s.createPlaylist(remi, 'test add / remove')
-    String initialPlaylistId = pl.id
+    def remi = s.getUser('remi')
+    s.createPlaylist(remi, 'test add / remove')
+    def pl = s.getPlaylists(remi)[0] 
     def tracks = s.getUserTracks(remi, true, null)
-    tracks.each { Track t ->
+    tracks.each { t ->
       s.addTrackToPlaylist(t, pl)
     }
 
     // count tracks in first playlist and remove one track
     remi = s.getUser('remi')
     def playlists = s.getPlaylists(remi)
-    Playlist playlist1 = playlists.next()
+    def playlist1 = playlists[0]
     tracks = s.getTracksInPlaylist(playlist1)
-    int len = tracks.length()
-    Track track = tracks.next()
+    int len = tracks.size()
+    def track = tracks[0]
     s.removeTrackFromPlaylist(track, playlist1)
 
     // count again
-    pl = s.couch.get(Playlist.class, initialPlaylistId)
+    pl = s.getPlaylists(remi)[0]
     tracks = s.getTracksInPlaylist(pl)
-    assert tracks.length() == len-1
+    assert tracks.size() == len-1
   }
 
   void testMD5Check() {
     createTracksAndUsers()
 
     LaDaubeSession s = getLadaubeSession()
-    User remi = s.getUser('remi')
-    def track = s.getUserTracks(remi, false, null).next()
+    def remi = s.getUser('remi')
+    def track = s.getUserTracks(remi, false, null)[0]
     def tmd5 = track.md5
 
     assert s.checkMD5(remi, tmd5)
@@ -331,7 +335,7 @@ class LadaubeSessionTest extends GroovyTestCase {
     createTracksAndUsers()
     try {
       LaDaubeSession s = getLadaubeSession()
-      User remi = s.getUser('remi')
+      def remi = s.getUser('remi')
       InputStream is = getClass().getResourceAsStream('/Someone New.mp3')
       s.createTrack(remi, is, 'Someone New')
       fail('should have failed')
@@ -358,38 +362,9 @@ class LadaubeSessionTest extends GroovyTestCase {
 
   private void cleanup() {
     LaDaubeSession s = getLadaubeSession()
-    ViewQuery query = new ViewQuery()
-                        .designDocId("_design/ladaube-couch")
-                        .viewName("allBuddies")
-    List<Buddies> buddies = s.couch.queryView(query, Buddies.class)
-    for (Buddies b : buddies) {
-      s.couch.delete(b.id, b.revision)
-    }
 
-    query = new ViewQuery()
-                        .designDocId("_design/ladaube-couch")
-                        .viewName("playlists")
-    List<Playlist> playlists = s.couch.queryView(query, Playlist.class)
-    for (Playlist p : playlists) {
-      s.couch.delete(p.id, p.revision)
-    }
-
-    query = new ViewQuery()
-                        .designDocId("_design/ladaube-couch")
-                        .viewName("tracks")
-                        .includeDocs(true)
-    List<Track> tracks = s.couch.queryView(query, Track.class)
-    for (Track t : tracks) {
-      s.couch.delete(t.id, t.revision)
-    }
-
-    query = new ViewQuery()
-                        .designDocId("_design/ladaube-couch")
-                        .viewName("users")
-    List<User> users = s.couch.queryView(query, User.class)
-    for (User u : users) {
-      s.couch.delete(u.id, u.revision)
-    }
+    // drop all collections
+    s.clearCollections()
 
   }
 
@@ -397,14 +372,14 @@ class LadaubeSessionTest extends GroovyTestCase {
     createTracksAndUsers()
     LaDaube.get().doInSession { LaDaubeSession s ->
       def res = s.getUserTracks(s.getUser('remi'),true,null,null,null,'name','ASC');
-      assert res.length() == 3
+      assert res.size() == 3
 
       // verify order
-      def t0 = res.next()
+      def t0 = res[0]
       println "t0 : $t0.name"
-      def t1 = res.next()
+      def t1 = res[1]
       println "t1 : $t1.name"
-      def t2 = res.next()
+      def t2 = res[2]
       println "t2 : $t2.name"
 
       assert t0.name.compareTo(t1.name) < 0
@@ -416,14 +391,14 @@ class LadaubeSessionTest extends GroovyTestCase {
     createTracksAndUsers()
     LaDaube.get().doInSession { LaDaubeSession s ->
       def res = s.getUserTracks(s.getUser('remi'),true,null,null,null,'name','DESC');
-      assert res.length() == 3
+      assert res.size() == 3
 
       // verify order
-      def t0 = res.next()
+      def t0 = res[0]
       println "t0 : $t0.name"
-      def t1 = res.next()
+      def t1 = res[1]
       println "t1 : $t1.name"
-      def t2 = res.next()
+      def t2 = res[2]
       println "t2 : $t2.name"
 
       assert t0.name.compareTo(t1.name) > 0

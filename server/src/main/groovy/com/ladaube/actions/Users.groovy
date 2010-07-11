@@ -5,8 +5,8 @@ import net.sourceforge.stripes.action.UrlBinding
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.ForwardResolution
 import com.ladaube.modelcouch.User
-import com.ladaube.modelcouch.LaDaube
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaube
+import com.ladaube.model.LaDaubeSession
 import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.action.SimpleMessage
 import net.sourceforge.stripes.action.RedirectResolution

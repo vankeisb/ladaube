@@ -3,8 +3,8 @@ package com.ladaube.actions
 import net.sourceforge.stripes.action.UrlBinding
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.DefaultHandler
-import com.ladaube.modelcouch.LaDaube
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaube
+import com.ladaube.model.LaDaubeSession
 import com.ladaube.util.JsonUtil
 import com.ladaube.util.auth.RequiresAuthentication
 

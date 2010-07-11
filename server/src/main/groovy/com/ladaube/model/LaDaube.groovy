@@ -1,4 +1,4 @@
-package com.ladaube.modelcouch
+package com.ladaube.model
 
 public class LaDaube {
 

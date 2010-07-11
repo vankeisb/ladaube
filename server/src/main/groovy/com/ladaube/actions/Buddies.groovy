@@ -3,12 +3,12 @@ package com.ladaube.actions
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.ForwardResolution
 import net.sourceforge.stripes.action.DefaultHandler
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import net.sourceforge.stripes.action.UrlBinding
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.auth.RequiresAuthentication
 import com.ladaube.util.JsonUtil
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/buddies')
 @RequiresAuthentication

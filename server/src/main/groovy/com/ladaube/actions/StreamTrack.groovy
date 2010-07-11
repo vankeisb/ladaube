@@ -6,11 +6,11 @@ import com.ladaube.util.auth.RequiresAuthentication
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.DefaultHandler
 import net.sourceforge.stripes.action.StreamingResolution
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import javax.servlet.http.HttpServletResponse
 import net.sourceforge.stripes.util.Log
 import com.ladaube.modelcouch.Track
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/stream/{track}')
 @RequiresAuthentication

@@ -1,4 +1,4 @@
-package com.ladaube.modelcouch
+package com.ladaube.model
 
 class TrackAlreadyExistException extends Exception {
 

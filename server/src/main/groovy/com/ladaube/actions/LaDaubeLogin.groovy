@@ -1,7 +1,7 @@
 package com.ladaube.actions
 
 import net.sourceforge.stripes.action.UrlBinding
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import net.sourceforge.stripes.action.Resolution
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
@@ -12,7 +12,7 @@ import net.sourceforge.stripes.action.DontValidate
 import net.sourceforge.stripes.action.RedirectResolution
 import com.ladaube.modelcouch.User
 import com.ladaube.util.auth.LoginActionBean
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaubeSession
 import org.apache.log4j.Logger
 
 @UrlBinding('/login')

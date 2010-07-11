@@ -2,8 +2,8 @@ package com.ladaube.util
 
 import com.ladaube.modelcouch.User
 import groovy.text.SimpleTemplateEngine
-import com.ladaube.modelcouch.LaDaube
-import com.ladaube.modelcouch.LaDaubeSession
+import com.ladaube.model.LaDaube
+import com.ladaube.model.LaDaubeSession
 import javax.mail.Session
 import javax.mail.Transport
 import javax.mail.internet.MimeMessage

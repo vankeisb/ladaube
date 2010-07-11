@@ -11,13 +11,13 @@ import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.action.SimpleMessage
 import net.sourceforge.stripes.validation.SimpleError
 import net.sourceforge.stripes.action.RedirectResolution
-import com.ladaube.modelcouch.LaDaube
+import com.ladaube.model.LaDaube
 import com.ladaube.util.auth.RequiresAuthentication
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
 import com.ladaube.modelcouch.Track
-import com.ladaube.modelcouch.LaDaubeSession
-import com.ladaube.modelcouch.TrackAlreadyExistException
+import com.ladaube.model.LaDaubeSession
+import com.ladaube.model.TrackAlreadyExistException
 import org.apache.log4j.Logger
 
 @UrlBinding("/upload")
