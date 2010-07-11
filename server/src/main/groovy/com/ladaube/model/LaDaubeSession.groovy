@@ -135,8 +135,39 @@ public class LaDaubeSession {
       int dirInt = dir == 'ASC' ? 1 : -1
       res = res.sort(new BasicDBObject(sort, dirInt))
     }
-    return res.toArray()
+
+    res = res.toArray()
+
+    // ugly iteration...
+    if (query) {
+      def filtered = []
+      res.each { r ->
+        if (matchesSearch(r, query)) {
+          filtered << r
+        }
+      }
+      res = filtered
+    }
+    return res
   }
+
+  private boolean stringMatch(def track, String crit, String propName) {
+    String val = track[propName]
+    def critLc = crit.toLowerCase()
+    def valLc = val ? val.toLowerCase() : null
+    return valLc!=null && valLc.indexOf(critLc)!=-1
+  }
+
+  private matchesSearch(def track, String crit) {
+    def stringProps = ['name', 'artist', 'album', 'albumArtist', 'composer', 'genre', 'userId']
+    for (String s : stringProps) {
+      if (stringMatch(track, crit, s)) {
+        return true
+      }
+    }
+    return false
+  }
+
 
   def getTrackById(String id) {
     return byId(db.tracks, id)
