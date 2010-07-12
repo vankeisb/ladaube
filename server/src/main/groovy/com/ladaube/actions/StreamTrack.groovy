@@ -25,8 +25,11 @@ class StreamTrack extends BaseAction {
     def t = LaDaube.get().doInSession { s->
       return s.getTrack(track)
     }
-    logger.debug("Streaming track $t._id")
-    return new TrackResolution(t)
+    if (t) {
+      logger.debug("Streaming track $t._id")
+      return new TrackResolution(t)
+    }
+    return null
   }
 
 }

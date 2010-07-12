@@ -12,8 +12,8 @@ public class JsonUtil {
 
   JSONObject userToJson(def u) {
     JSONObject o = new JSONObject()
-    o.put('id', u.id)
-    o.put('username', u.id)
+    o.put('id', u.username)
+    o.put('username', u.username)
     return o
   }
 
@@ -40,7 +40,7 @@ public class JsonUtil {
 
   JSONObject trackToJson(def track) {
     JSONObject o = new JSONObject()
-    o.put('id', track.id)
+    o.put('id', track._id)
     o.put('name', track.name)
     o.put('artist', track.artist)
     o.put('albumArtist', track.albumArtist)
@@ -72,7 +72,7 @@ public class JsonUtil {
 
   JSONObject playlistToJson(def p) {
     JSONObject o = new JSONObject()
-    o.put('id', p.id)
+    o.put('id', p._id)
     o.put('name', p.name)
     return o
   }

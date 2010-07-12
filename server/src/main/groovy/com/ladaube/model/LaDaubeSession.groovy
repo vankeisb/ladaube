@@ -77,7 +77,7 @@ public class LaDaubeSession {
   }
 
   def getTrack(def id) {
-    return byId(db.tracks, id)
+    return byId(db.tracks, 'ObjectId("' + id + '")')    
   }
 
   def getPlaylist(def id) {
@@ -228,6 +228,10 @@ public class LaDaubeSession {
 
       // insert in db
       db.tracks.insert(t)
+
+      // reload the track to make sure we have an _id prop
+      t = db.tracks.findOne([uuid:uuid])
+
     } finally {
       f.delete()
     }

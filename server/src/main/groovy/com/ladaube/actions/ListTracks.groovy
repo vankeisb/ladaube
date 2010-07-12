@@ -44,30 +44,11 @@ public class ListTracks extends BaseAction {
         return s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
       }
     }
-    Long totalLen = tracks.size()    
+    def tracksList = tracks.toArray()
+    Long totalLen = tracksList.size()    
     long elapsed = System.currentTimeMillis() - startTime
     logger.debug("List tracks took $elapsed ms")
-    return u.resolution(u.tracksToJson(tracks, false, totalLen).toString())
-  }
-
-
-  def getTracks() {
-    def tracks = []
-    LaDaube.get().doInSession { LaDaubeSession s ->
-      def it
-      if (playlistId) {
-        def p = s.getPlaylist(playlistId)
-        it = s.getTracksInPlaylist(p)
-      } else {
-        def buddy = buddyId==null ? user : s.getUser(buddyId)
-        boolean includeBuddies = buddy.id==user.id
-        it = s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
-      }
-      while (it.hasNext()) {
-        tracks << it.next()
-      }      
-    }
-    return tracks
+    return u.resolution(u.tracksToJson(tracksList, false, totalLen).toString())
   }
 
 }
