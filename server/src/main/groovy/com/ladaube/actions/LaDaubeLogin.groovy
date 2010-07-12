@@ -10,23 +10,23 @@ import javax.servlet.http.HttpSession
 import com.ladaube.util.auth.AuthConstants
 import net.sourceforge.stripes.action.DontValidate
 import net.sourceforge.stripes.action.RedirectResolution
-import com.ladaube.modelcouch.User
-import com.ladaube.util.auth.LoginActionBean
 import com.ladaube.model.LaDaubeSession
 import org.apache.log4j.Logger
+import com.ladaube.util.auth.LoginActionBean
 
 @UrlBinding('/login')
-public class LaDaubeLogin extends LoginActionBean<User> {
+public class LaDaubeLogin extends LoginActionBean {
 
   private static final Logger logger = Logger.getLogger(LaDaubeLogin.class)
 
-  protected User authenticate() {
-    User u = LaDaube.get().doInSession { LaDaubeSession s ->
+  protected def authenticate() {
+    def u = LaDaube.get().doInSession { LaDaubeSession s ->
       try {
         logger.info("Trying to authenticate $username")
         return s.getUser(username);
       } catch(Exception e) {
         logger.warn("Exception at login !", e)
+        return null
       }
     }
     if (u==null) {
@@ -47,13 +47,13 @@ public class LaDaubeLogin extends LoginActionBean<User> {
   }
 
   Resolution rpcLogin() {
-    User user = getCurrentUser(context.request.session)
+    def user = getCurrentUser(context.request.session)
     JsonUtil util = new JsonUtil()
     return util.resolution(util.userToJson(user).toString())
   }
 
-  static User getCurrentUser(HttpSession session) {
-    return (User)session.getAttribute(AuthConstants.SESSION_ATTR_CURRENT_USER)
+  static def getCurrentUser(HttpSession session) {
+    return session.getAttribute(AuthConstants.SESSION_ATTR_CURRENT_USER)
   }
 
   @DontValidate

@@ -3,9 +3,6 @@ package com.ladaube.util
 import org.json.JSONObject
 import net.sourceforge.stripes.action.StreamingResolution
 import org.json.JSONArray
-import com.ladaube.modelcouch.User
-import com.ladaube.modelcouch.Track
-import com.ladaube.modelcouch.Playlist
 
 public class JsonUtil {
 
@@ -13,23 +10,23 @@ public class JsonUtil {
     return new StreamingResolution('text/json', jsonData)
   }
 
-  JSONObject userToJson(User u) {
+  JSONObject userToJson(def u) {
     JSONObject o = new JSONObject()
     o.put('id', u.id)
     o.put('username', u.id)
     return o
   }
 
-  JSONObject tracksToJson(List<Track> tracks, boolean includeSequence) {
+  JSONObject tracksToJson(def tracks, boolean includeSequence) {
     return tracksToJson(tracks, includeSequence, null)
   }
 
-  JSONObject tracksToJson(List<Track> tracks, boolean includeSequence, Long totalCount) {
+  JSONObject tracksToJson(def tracks, boolean includeSequence, Long totalCount) {
     JSONObject result = new JSONObject()
     JSONArray array = new JSONArray()
     result.put("data", array)
     int seq = 1
-    tracks.each { Track t ->
+    tracks.each { t ->
       JSONObject json = trackToJson(t)
       if (includeSequence) {
         json.put('sequence', seq)
@@ -41,7 +38,7 @@ public class JsonUtil {
     return result
   }
 
-  JSONObject trackToJson(Track track) {
+  JSONObject trackToJson(def track) {
     JSONObject o = new JSONObject()
     o.put('id', track.id)
     o.put('name', track.name)
@@ -57,23 +54,23 @@ public class JsonUtil {
     return o
   }
 
-  JSONArray buddiesToJson(List<User> buddies) {
+  JSONArray buddiesToJson(def buddies) {
     JSONArray a = new JSONArray()
-    buddies.each { User u ->
+    buddies.each { u ->
       a.put(userToJson(u))
     }
     return a
   }
 
-  JSONArray playlistsToJson(List<Playlist> playlists) {
+  JSONArray playlistsToJson(def playlists) {
     JSONArray a = new JSONArray()
-    playlists.each { Playlist p ->
+    playlists.each { p ->
       a.put(playlistToJson(p))
     }
     return a
   }
 
-  JSONObject playlistToJson(Playlist p) {
+  JSONObject playlistToJson(def p) {
     JSONObject o = new JSONObject()
     o.put('id', p.id)
     o.put('name', p.name)

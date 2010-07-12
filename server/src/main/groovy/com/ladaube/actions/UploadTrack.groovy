@@ -15,7 +15,6 @@ import com.ladaube.model.LaDaube
 import com.ladaube.util.auth.RequiresAuthentication
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
-import com.ladaube.modelcouch.Track
 import com.ladaube.model.LaDaubeSession
 import com.ladaube.model.TrackAlreadyExistException
 import org.apache.log4j.Logger
@@ -30,7 +29,7 @@ public class UploadTrack extends BaseAction {
   FileBean data
 
   // used to store created track for RPC resolution
-  private Track track;
+  private def track;
   
   @DefaultHandler
   @DontValidate

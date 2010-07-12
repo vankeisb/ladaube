@@ -1,6 +1,5 @@
 package com.ladaube.util
 
-import com.ladaube.modelcouch.User
 import groovy.text.SimpleTemplateEngine
 import com.ladaube.model.LaDaube
 import com.ladaube.model.LaDaubeSession
@@ -20,34 +19,34 @@ class MassMailer {
 
 Salut $username,
 
-Tu reois cet email car tu as ŽtŽ choisi pour participer au beta-testing de LaDaube.
+Tu reï¿½ois cet email car tu as ï¿½tï¿½ choisi pour participer au beta-testing de LaDaube.
 
-Normalement, tu connais dŽjˆ le principe du bouzin, je te refais pas tout le film. Si t'as un doute, tu me demandes (reply ˆ cet email).
+Normalement, tu connais dï¿½jï¿½ le principe du bouzin, je te refais pas tout le film. Si t'as un doute, tu me demandes (reply ï¿½ cet email).
 
-L'idŽe c'est que tu utilises l'appli afin de donner ton avis, tes recommandations, de traiter... bref, l‰che toi !
+L'idï¿½e c'est que tu utilises l'appli afin de donner ton avis, tes recommandations, de traiter... bref, lï¿½che toi !
 
-On t'a crŽŽ un compte :
+On t'a crï¿½ï¿½ un compte :
 url : http://rvkb.dyndns.info/ladaube
 login : $username
 password : $username
 
 Il n'est pas possible d'inviter des potes pour le moment, tout est "en dur". La feature d'ajout de buddy sera dispo plus tard. 
 
-Tu peux lui bourrer le cul : je lui ai collŽ un bon gros disque qui devrait encaisser (Žvite de dŽpasser les 50Go quand mme).
-Par contre a tourne sur mon mac @home, servi par ma livebox, donc ne t'attend pas ˆ des perfs de malades.
-Aussi, j'essaie de laisser la machine allumŽe le plus possible sans interrompre le service, mais bon, il se peut que ca tombe. Si c'est le cas, retente ta chance un peu plus tard.
+Tu peux lui bourrer le cul : je lui ai collï¿½ un bon gros disque qui devrait encaisser (ï¿½vite de dï¿½passer les 50Go quand mï¿½me).
+Par contre ï¿½a tourne sur mon mac @home, servi par ma livebox, donc ne t'attend pas ï¿½ des perfs de malades.
+Aussi, j'essaie de laisser la machine allumï¿½e le plus possible sans interrompre le service, mais bon, il se peut que ca tombe. Si c'est le cas, retente ta chance un peu plus tard.
 
-Pour l'instant tu peux pas changer ton mot de passe, donc prire de ne pas faire n'imp avec les logins des copains !
+Pour l'instant tu peux pas changer ton mot de passe, donc priï¿½re de ne pas faire n'imp avec les logins des copains !
 
-Voilˆ je crois que j'ai tout dit. Si tu as des questions, n'hŽsite pas.
+Voilï¿½ je crois que j'ai tout dit. Si tu as des questions, n'hï¿½site pas.
 
 Amuse toi bien, et tiens nous au courant !
 
 A+
 
-RŽmi / LaDaube
+Rï¿½mi / LaDaube
 
-PS : Evite de trop parler de tout a, j'ai pas envie de finir en taule pour un beta test :/
+PS : Evite de trop parler de tout ï¿½a, j'ai pas envie de finir en taule pour un beta test :/
 
 '''
     def template = engine.createTemplate(email)
@@ -56,7 +55,7 @@ PS : Evite de trop parler de tout a, j'ai pas envie de finir en taule pour un b
 
     LaDaube.get().doInSession { LaDaubeSession s ->
       userNames.each { username ->
-        User u = s.getUser(username)
+        def u = s.getUser(username)
         def mailStr = template.make(['username': u.id]).toString()
         println "Sending to $u.id"
         postMail(u.email, 'LaDaube beta testing...', mailStr, 'ladaube-contact@gmail.com')

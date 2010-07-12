@@ -9,10 +9,10 @@ import com.ladaube.util.MD5
 import org.apache.log4j.Logger
 import com.gmongo.GMongo
 
-import com.ladaube.modelcouch.Track
 import com.mongodb.BasicDBObject
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSFile
+import java.util.regex.Pattern
 
 public class LaDaubeSession {
 
@@ -36,7 +36,7 @@ public class LaDaubeSession {
   }
 
   def getUsers() {
-    return db.users
+    return db.users.find()
   }
 
   def createUser(String username, String clearPassword) {
@@ -85,16 +85,14 @@ public class LaDaubeSession {
   }
 
   def getBuddies(def user) {
-    def users = []
+    def userNames = []
     String username = user.username
-    def res = db.buddies.find(user1:username)
-    while (res.hasNext()) {
-      users << getUser(res.next().user2)
+    db.buddies.find(user1:username).each { buddyDoc ->
+      userNames << buddyDoc.user2
     }
-    return users
+    return db.users.find([username:[$in:userNames]])
   }
 
-  // TODO update tests and remove this method (or use named arguments ?)
   def getUserTracks(def user,
                     Boolean includeBuddies,
                     String query) {
@@ -118,23 +116,17 @@ public class LaDaubeSession {
       }      
     }
 
-    def res = db.tracks.find([userId: [$in: allUsers]])
+    def findCrit = [userId: [$in: allUsers]]
+
+    if (query) {
+      def p = Pattern.compile(query, Pattern.CASE_INSENSITIVE)
+      findCrit.searchData = p
+    }
+
+    def res = db.tracks.find(findCrit)
     if (sort) {
       int dirInt = dir == 'ASC' ? 1 : -1
       res = res.sort(new BasicDBObject(sort, dirInt))
-    }
-
-    res = res.toArray()
-
-    // ugly iteration...
-    if (query) {
-      def filtered = []
-      res.each { r ->
-        if (matchesSearch(r, query)) {
-          filtered << r
-        }
-      }
-      res = filtered
     }
     return res
   }
@@ -178,6 +170,8 @@ public class LaDaubeSession {
       fos.close()
       data.close()
 
+      StringBuilder sb = new StringBuilder();
+
       // MD5 verification
       String md5 = MD5.get(f)
       if (this.checkMD5(user, md5)) {
@@ -193,25 +187,33 @@ public class LaDaubeSession {
       if (!t['name']) {
         t['name'] = originalFileName
       }
+      sb.append(t.name)
       t['artist'] = tag.getLeadArtist()
+      sb.append(" ").append(t.artist)
       t['albumArtist'] = null // TODO
+      sb.append(" ").append(t.albumArtist)
       t['album'] = tag.getAlbumTitle()
+      sb.append(" ").append(t.album)
       if (tag instanceof AbstractID3v2) {
         t['composer'] = tag.getAuthorComposer()
       }
       String year = tag.getYearReleased()
       try {
         t['year'] = year==null ? null : Integer.parseInt(year)
+        sb.append(" ").append(Integer.toString(t.year))
       } catch(NumberFormatException e) {
         // not a valid int
       }
       t['genre'] = tag.getSongGenre()
+      sb.append(" ").append(t.genre)      
       String trackNumber = tag.getTrackNumberOnAlbum()
       try {
         t['trackNumber'] = trackNumber==null ? null : Integer.parseInt(trackNumber)
       } catch(NumberFormatException e) {
         // not a valid int
       }
+
+      t['searchData'] = sb.toString()
 
       t['postedOn'] = new Date()
 
@@ -246,7 +248,7 @@ public class LaDaubeSession {
     if (!user) {
       throw new IllegalArgumentException('user cannot be null')
     }
-    return db.playlists.find(userId: user.username).toArray()
+    return db.playlists.find(userId: user.username)
   }
 
   void addTrackToPlaylist(def t, def playlist) {
@@ -261,14 +263,7 @@ public class LaDaubeSession {
   }
 
   def getTracksInPlaylist(def p) {
-    def result = []
-    def tracks = p.tracks
-    if (tracks) {
-      for (def trackId : tracks) {
-        result << byId(db.tracks, trackId)
-      }
-    }
-    result
+    return db.tracks.find([_id: [$in : p.tracks]])
   }
 
   void deletePlaylist(def pl) {
@@ -287,7 +282,7 @@ public class LaDaubeSession {
     return db.tracks.count([userId:u.username, md5:md5]) > 0
   }
 
-  void createImageForTrack(Track track, String originalFileName, InputStream data) {
+  void createImageForTrack(def track, String originalFileName, InputStream data) {
     // TODO
 //    String baseDir = System.getProperty('java.io.tmpdir')
 //    String fileName = baseDir + File.separator + UUID.randomUUID().toString() + '.mp3'

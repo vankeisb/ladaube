@@ -12,7 +12,6 @@ import net.sourceforge.stripes.action.RedirectResolution
 import net.sourceforge.stripes.action.SimpleMessage
 import com.ladaube.util.auth.RequiresAuthentication
 
-import com.ladaube.modelcouch.Track
 import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/image/{track}')
@@ -20,7 +19,7 @@ import com.ladaube.model.LaDaubeSession
 public class TrackImage extends BaseAction {
 
   @Validate(required = true)
-  Track track
+  String track
 
   @Validate(required = true, on = ['upload'])
   FileBean data
@@ -32,21 +31,17 @@ public class TrackImage extends BaseAction {
 
   Resolution upload() {
     LaDaube.get().doInSession { LaDaubeSession s ->
-      s.createImageForTrack(track, data.fileName, data.inputStream)
+      def t = s.getTrack(track)
+      s.createImageForTrack(t, data.fileName, data.inputStream)
     }
     context.messages << new SimpleMessage('Image uploaded and associated to track.')
-    return new RedirectResolution(TrackImage.class).addParameter('track', track.id)
+    return new RedirectResolution(TrackImage.class).addParameter('track', track)
   }
 
   def getUserTracks() {
-    def tracks = []
     LaDaube.get().doInSession { LaDaubeSession s ->
-      def it = s.getUserTracks(user, false, null)
-      while (it.hasNext()) {
-        tracks << it.next()
-      }
+      return s.getUserTracks(user, false, null)
     }
-    return tracks
   }
 
   @DefaultHandler

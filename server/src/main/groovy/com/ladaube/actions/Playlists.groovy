@@ -10,19 +10,19 @@ import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
 import net.sourceforge.stripes.validation.Validate
 import net.sourceforge.stripes.action.RedirectResolution
-import com.ladaube.modelcouch.Playlist
-import com.ladaube.modelcouch.Track
 import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/playlists')
 @RequiresAuthentication
 public class Playlists extends BaseAction {
 
+  def playlist
+
   @Validate(required = true, on = ['tracks','addTracks','delete', 'removeTracks'])
-  Playlist playlist
+  String playlistId
 
   @Validate(required=true, on=['addTracks', 'removeTracks'])
-  List<Track> tracks
+  List<String> tracks
 
   @Validate(required=true, on=['createPlaylist'])
   String name
@@ -49,6 +49,7 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution addTracks() {
     LaDaube.get().doInSession{ LaDaubeSession s ->
+      playlist = s.getPlaylist(playlistId)
       tracks.each { t->
         s.addTrackToPlaylist(t, playlist)
       }
@@ -61,6 +62,7 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonList')
   Resolution delete() {
     LaDaube.get().doInSession { LaDaubeSession s ->
+      playlist = s.getPlaylist(playlistId)       
       s.deletePlaylist(playlist)
     }
     return new RedirectResolution('/playlists')
@@ -69,7 +71,9 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution removeTracks() {
     LaDaube.get().doInSession { LaDaubeSession s ->
-      tracks.each { Track t ->
+      playlist = s.getPlaylist(playlistId)      
+      tracks.each { String tId ->
+        def t = s.getTrack(tId)
         s.removeTrackFromPlaylist(t, playlist)
       }
     }
@@ -91,23 +95,15 @@ public class Playlists extends BaseAction {
   def getPlaylists() {
     def res = []
     LaDaube.get().doInSession { LaDaubeSession s ->
-      def hits = s.getPlaylists(user)
-      while (hits.hasNext()) {
-        res << hits.next()
-      }
+      return s.getPlaylists(user)
     }
-    return res
   }
 
   def getTracksInPlaylist() {
     def tracks = []
     LaDaube.get().doInSession {LaDaubeSession s ->
-      def it = s.getTracksInPlaylist(playlist)
-      while (it.hasNext()) {
-        tracks << it.next()
-      }
+      return s.getTracksInPlaylist(playlist)
     }
-    return tracks
   }
 
 }

@@ -4,7 +4,6 @@ import com.ladaube.util.auth.RequiresAuthentication
 import net.sourceforge.stripes.action.UrlBinding
 import net.sourceforge.stripes.action.Resolution
 import net.sourceforge.stripes.action.ForwardResolution
-import com.ladaube.modelcouch.User
 import com.ladaube.model.LaDaube
 import com.ladaube.model.LaDaubeSession
 import net.sourceforge.stripes.validation.Validate
@@ -16,8 +15,8 @@ import net.sourceforge.stripes.action.DefaultHandler
 @RequiresAuthentication
 class Users extends BaseAction {
 
-  private Map<User,List<User>> usersMap = null
-  private List<User> users = null
+  private Map usersMap = null
+  private List users = null
 
   @Validate(required=true, on=["addUser", "makeBuddies"])
   String username
@@ -40,7 +39,7 @@ class Users extends BaseAction {
     users = []
     usersMap = [:]
     LaDaube.get().doInSession { LaDaubeSession s ->
-      s.getUsers().each { User u ->
+      s.getUsers().each { u ->
         users << u
         usersMap.put(u, s.getBuddies(u))
       }
@@ -48,14 +47,13 @@ class Users extends BaseAction {
     return new ForwardResolution('/WEB-INF/jsp/users.jsp');
   }
 
-  Map<User,List<User>> getUsersMap() {
+  Map getUsersMap() {
     return usersMap
   }
 
-  List<User> getUsers() {
+  List getUsers() {
     return users
   }
-
 
   Resolution addUser() {
 
@@ -79,8 +77,8 @@ class Users extends BaseAction {
     }
     
     LaDaube.get().doInSession { LaDaubeSession s ->
-      User u1 = s.getUser(username)
-      User u2 = s.getUser(buddy)
+      def u1 = s.getUser(username)
+      def u2 = s.getUser(buddy)
       s.makeBuddies(u1, u2)
     }
     context.messages.add(new SimpleMessage("$username and $buddy are now connected"))

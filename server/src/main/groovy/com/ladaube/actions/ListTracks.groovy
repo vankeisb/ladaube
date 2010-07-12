@@ -8,8 +8,6 @@ import com.ladaube.model.LaDaube
 import com.ladaube.util.rpc.FatClientEvent
 import com.ladaube.util.JsonUtil
 import com.ladaube.model.LaDaubeSession
-import com.ladaube.modelcouch.User
-import com.ladaube.modelcouch.Playlist
 import org.apache.log4j.Logger
 
 @UrlBinding('/list/{query}')
@@ -34,39 +32,22 @@ public class ListTracks extends BaseAction {
   }
 
   Resolution displayJson() {
-//    if (query==null && playlistId==null) {
-//      Resolution res = null;
-//      LaDaube.get().doInSession{ LaDaubeSession s ->
-//        User buddy = buddyId==null ? user : s.getUser(buddyId)
-//        boolean includeBuddies = buddy.id==user.id
-//        InputStream is = s.getUserTracksStreamed(buddy, includeBuddies, start, limit, sort, dir);
-//        res = new StreamingResolution('text/json', is);
-//      }
-//      return res;
-//    } else {
-      long startTime = System.currentTimeMillis()
-      JsonUtil u = new JsonUtil()
-      Long totalLen = null
-      def tracks = []
-      LaDaube.get().doInSession { LaDaubeSession s ->
-        def it
-        if (playlistId) {
-          Playlist p = s.getPlaylist(playlistId)
-          it = s.getTracksInPlaylist(p)
-        } else {
-          User buddy = buddyId==null ? user : s.getUser(buddyId)
-          boolean includeBuddies = buddy.id==user.id
-          it = s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
-        }
-        totalLen = it.totalLength()
-        while (it.hasNext()) {
-          tracks << it.next()
-        }
+    long startTime = System.currentTimeMillis()
+    JsonUtil u = new JsonUtil()
+    def tracks = LaDaube.get().doInSession { LaDaubeSession s ->
+      if (playlistId) {
+        def p = s.getPlaylist(playlistId)
+        return s.getTracksInPlaylist(p)
+      } else {
+        def buddy = buddyId==null ? user : s.getUser(buddyId)
+        boolean includeBuddies = buddy.id==user.id
+        return s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
       }
-      long elapsed = System.currentTimeMillis() - startTime
-      logger.debug("List tracks took $elapsed ms")
-      return u.resolution(u.tracksToJson(tracks, false, totalLen).toString())
-//    }
+    }
+    Long totalLen = tracks.size()    
+    long elapsed = System.currentTimeMillis() - startTime
+    logger.debug("List tracks took $elapsed ms")
+    return u.resolution(u.tracksToJson(tracks, false, totalLen).toString())
   }
 
 
@@ -75,10 +56,10 @@ public class ListTracks extends BaseAction {
     LaDaube.get().doInSession { LaDaubeSession s ->
       def it
       if (playlistId) {
-        Playlist p = s.getPlaylist(playlistId)
+        def p = s.getPlaylist(playlistId)
         it = s.getTracksInPlaylist(p)
       } else {
-        User buddy = buddyId==null ? user : s.getUser(buddyId)
+        def buddy = buddyId==null ? user : s.getUser(buddyId)
         boolean includeBuddies = buddy.id==user.id
         it = s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
       }

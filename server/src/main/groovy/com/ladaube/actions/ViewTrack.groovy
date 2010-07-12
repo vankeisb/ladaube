@@ -8,14 +8,14 @@ import net.sourceforge.stripes.action.DefaultHandler
 import com.ladaube.util.rpc.FatClientEvent
 import net.sourceforge.stripes.action.ForwardResolution
 import com.ladaube.util.JsonUtil
-import com.ladaube.modelcouch.Track
+import com.ladaube.model.LaDaube
 
 @UrlBinding('/track/{track}')
 @RequiresAuthentication
 public class ViewTrack extends BaseAction {
 
   @Validate(required=true)
-  Track track
+  String track
 
   @DefaultHandler
   @FatClientEvent(alternateResolution = 'displayJson')
@@ -25,7 +25,10 @@ public class ViewTrack extends BaseAction {
 
   Resolution displayJson() {
     JsonUtil u = new JsonUtil()
-    return u.resolution(u.trackToJson(track).toString())
+    def t = LaDaube.get().doInSession{ s ->
+      return s.getTrack(track)
+    }
+    return u.resolution(u.trackToJson(t).toString())
   }
 
 }

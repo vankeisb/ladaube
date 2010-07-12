@@ -9,7 +9,6 @@ import net.sourceforge.stripes.action.StreamingResolution
 import com.ladaube.model.LaDaube
 import javax.servlet.http.HttpServletResponse
 import net.sourceforge.stripes.util.Log
-import com.ladaube.modelcouch.Track
 import com.ladaube.model.LaDaubeSession
 
 @UrlBinding('/stream/{track}')
@@ -19,21 +18,24 @@ class StreamTrack extends BaseAction {
   private static final Log logger = Log.getInstance(StreamTrack.class);
 
   @Validate(required=true)
-  Track track
+  String track
 
   @DefaultHandler
   Resolution stream() {
-    logger.debug("Streaming track $track.id")
-    return new TrackResolution(track)
+    def t = LaDaube.get().doInSession { s->
+      return s.getTrack(track)
+    }
+    logger.debug("Streaming track $t._id")
+    return new TrackResolution(t)
   }
 
 }
 
 class TrackResolution extends StreamingResolution {
 
-  private Track t
+  private def t
 
-  def TrackResolution(Track t) {
+  def TrackResolution(def t) {
     super('audio/mpeg')
     this.t = t
     setFilename(t.name + '.mp3')
