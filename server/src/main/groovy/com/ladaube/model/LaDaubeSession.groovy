@@ -10,8 +10,9 @@ import org.apache.log4j.Logger
 import com.gmongo.GMongo
 
 import com.ladaube.modelcouch.Track
-import com.mongodb.DBObject
 import com.mongodb.BasicDBObject
+import com.mongodb.gridfs.GridFS
+import com.mongodb.gridfs.GridFSFile
 
 public class LaDaubeSession {
 
@@ -60,19 +61,6 @@ public class LaDaubeSession {
       def buddies2 = [user1:user2.username, user2:user1.username]
       db.buddies << buddies1
       db.buddies << buddies2
-
-      // propagate buddy ids in tracks
-//      def users = [user1, user2]
-//      users.each { u ->
-//        def bds = getBuddies(u)
-//        String[] bdIds = new String[bds.size()]
-//        int i = 0
-//        bds.each { b ->
-//          bdIds[i] = b.username
-//          i++
-//        }
-//        db.tracks.update([userId: u.username], [$set: [buddies: bdIds]])
-//      }
       logger.info("Users $user1.username and $user2.username are now buddies")
     }
   }
@@ -227,20 +215,17 @@ public class LaDaubeSession {
 
       t['postedOn'] = new Date()
 
-      // store buddy IDs in the track
-//      def userBuddies = getBuddies(user)
-//      String[] userBuddiesIds = new String[userBuddies.size()]
-//      int bdIndex = 0
-//      userBuddies.each { b ->
-//        userBuddiesIds[bdIndex] = b.id
-//        bdIndex++
-//      }
-//      t['buddies'] = userBuddiesIds
+      def uuid = UUID.randomUUID().toString()
+      t['uuid'] = uuid
 
+      // create the attachment for the file
+      GridFS fs = new GridFS(db)
+      GridFSFile fsFile = fs.createFile(f)
+      fsFile.put('uuid', uuid)
+      fsFile.save()
+
+      // insert in db
       db.tracks.insert(t)
-
-      // TODO create attachment (gridFS ?)
-
     } finally {
       f.delete()
     }
@@ -334,6 +319,12 @@ public class LaDaubeSession {
     db.users.remove([:])
     db.tracks.remove([:])
     db.playlists.remove([:])
+  }
+
+  int writeTrackDataToStream(def track, OutputStream os) {
+    GridFS fs = new GridFS(db)
+    GridFSFile file = fs.findOne(new BasicDBObject('uuid',track.uuid))
+    return TransferStreams.transfer(file.getInputStream(), os)
   }
   
 }

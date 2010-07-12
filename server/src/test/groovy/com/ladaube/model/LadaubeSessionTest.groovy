@@ -406,4 +406,24 @@ class LadaubeSessionTest extends GroovyTestCase {
     }
   }
 
+  void testAttachment() {
+    createTracksAndUsers()
+    LaDaube.get().doInSession { LaDaubeSession s ->
+      def track = s.getUserTracks(s.getUser('remi'), false, null)[0]
+      int len = track.contentLen;
+      String fileName = System.getProperty('java.io.tmpdir') + File.separator + 'test.data'
+      try {
+        FileOutputStream fos = new FileOutputStream(fileName)
+        s.writeTrackDataToStream(track, fos)
+        fos.flush()
+        fos.close()
+
+        File f = new File(fileName)
+        assert f.length() == len
+      } finally {
+        new File(fileName).delete()
+      }      
+    }
+  }
+
 }
