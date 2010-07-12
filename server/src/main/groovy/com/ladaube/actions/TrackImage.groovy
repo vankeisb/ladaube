@@ -13,6 +13,11 @@ import net.sourceforge.stripes.action.SimpleMessage
 import com.ladaube.util.auth.RequiresAuthentication
 
 import com.ladaube.model.LaDaubeSession
+import net.sourceforge.stripes.action.StreamingResolution
+import com.ladaube.util.TransferStreams
+import com.mongodb.BasicDBObject
+import com.mongodb.gridfs.GridFSFile
+import javax.servlet.http.HttpServletResponse
 
 @UrlBinding('/image/{track}')
 @RequiresAuthentication
@@ -46,7 +51,29 @@ public class TrackImage extends BaseAction {
 
   @DefaultHandler
   Resolution stream() {
-    return null
+    InputStream is
+    def t = LaDaube.get().doInSession { LaDaubeSession s ->
+      return s.getTrack(track)
+    }
+    return new ImageResolution(t)
+  }
+
+}
+
+class ImageResolution extends StreamingResolution {
+
+  private def t
+
+  def ImageResolution(def t) {
+    super('image/jpeg')
+    this.t = t
+    setFilename('trackImage.mp3')
+  }
+
+  void stream(HttpServletResponse response) throws Exception {
+     LaDaube.get().doInSession { LaDaubeSession s ->
+      s.writeTrackImageToStream(t, response.getOutputStream())
+     }
   }
 
 }

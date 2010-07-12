@@ -291,21 +291,10 @@ public class LaDaubeSession {
   }
 
   void createImageForTrack(def track, String originalFileName, InputStream data) {
-    // TODO
-//    String baseDir = System.getProperty('java.io.tmpdir')
-//    String fileName = baseDir + File.separator + UUID.randomUUID().toString() + '.mp3'
-//    File f = new File(fileName)
-//    try {
-//      FileOutputStream fos = new FileOutputStream(f)
-//      int len = TransferStreams.transfer(data, fos)
-//      fos.close()
-//      data.close()
-//      InputStream attchIs = new FileInputStream(f);
-//      Attachment a = new Attachment('img-' + track.id, attchIs, 'image/jpeg', len)
-//      couchDb.createAttachment(track.id, track.revision, a)
-//    } finally {
-//      f.delete()
-//    }
+    GridFS fs = new GridFS(db)
+    GridFSFile fsFile = fs.createFile(data)
+    fsFile.put('uuid', 'img' + track.uuid)
+    fsFile.save()
   }
 
   static AbstractMP3Tag getID3(File f) throws IOException, TagException {
@@ -328,6 +317,12 @@ public class LaDaubeSession {
     GridFS fs = new GridFS(db)
     GridFSFile file = fs.findOne(new BasicDBObject('uuid',track.uuid))
     return TransferStreams.transfer(file.getInputStream(), os)
+  }
+
+  int writeTrackImageToStream(def track, OutputStream os) {
+    GridFS fs = new GridFS(db)
+    GridFSFile file = fs.findOne(new BasicDBObject('uuid','img' + track.uuid))
+    return TransferStreams.transfer(file.getInputStream(), os)    
   }
   
 }
