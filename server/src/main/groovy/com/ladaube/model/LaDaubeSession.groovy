@@ -13,6 +13,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSFile
 import java.util.regex.Pattern
+import org.bson.types.ObjectId
 
 public class LaDaubeSession {
 
@@ -73,11 +74,14 @@ public class LaDaubeSession {
   }
 
   private def byId(def mongoCollection, def id) {
+    if (id instanceof String) {
+      id = new ObjectId(id)
+    }    
     return mongoCollection.findOne([_id:id])
   }
 
   def getTrack(def id) {
-    return byId(db.tracks, 'ObjectId("' + id + '")')    
+    return byId(db.tracks, id)
   }
 
   def getPlaylist(def id) {

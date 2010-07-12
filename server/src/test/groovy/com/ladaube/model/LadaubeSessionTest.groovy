@@ -424,4 +424,17 @@ class LadaubeSessionTest extends GroovyTestCase {
     }
   }
 
+  void testGetTrackById() {
+    createTracksAndUsers()
+    LaDaube.get().doInSession { LaDaubeSession s ->
+      def t = s.getUserTracks(s.getUser('remi'), false, null).next()
+      assert t
+      assert t._id
+
+      def t2 = s.getTrack(t._id.toString())
+      assert t2
+      assert t2._id == t._id
+    }
+  }
+
 }
