@@ -20,24 +20,30 @@ public class LaDaubeLogin extends LoginActionBean {
   private static final Logger logger = Logger.getLogger(LaDaubeLogin.class)
 
   protected def authenticate() {
-    def u = LaDaube.doInSession { LaDaubeSession s ->
+    def ip = getContext().getRequest().getRemoteAddr()
+    return LaDaube.doInSession { LaDaubeSession s ->
+      def u
       try {
         logger.info("Trying to authenticate $username")
-        return s.getUser(username);
+        u = s.getUser(username);
       } catch(Exception e) {
         logger.warn("Exception at login !", e)
+        s.db.stats_authentications << [username:username,date:new Date(), code:1, addr:ip]
         return null
       }
+      if (u==null) {
+        logger.warn("User $username not found")
+        s.db.stats_authentications << [username:username,date:new Date(), code:2, addr:ip]
+        return null
+      }
+      if (u.password != password) {
+        logger.warn("Password doesn't match")
+        s.db.stats_authentications << [username:username,date:new Date(), code:3, addr:ip]
+        return null
+      }
+      s.db.stats_authentications << [username:username,userId:u._id,date:new Date(), code:0, addr:ip]
+      return u
     }
-    if (u==null) {
-      logger.warn("User $username not found")
-      return null
-    }
-    if (u.password != password) {
-      logger.warn("Password doesn't match")
-      return null
-    }
-    return u
   }
 
   // redeclare login to enable fat client behavior

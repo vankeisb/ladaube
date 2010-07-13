@@ -129,7 +129,7 @@ class LaDaubeSession {
                     Integer limit,
                     String sort,
                     String dir) {
-
+    
     def allUsers = []
     allUsers << user.username
     if (includeBuddies) {
@@ -259,8 +259,7 @@ class LaDaubeSession {
       db.tracks.insert(t)
 
       // reload the track to make sure we have an _id prop
-      t = db.tracks.findOne([uuid:uuid])
-
+      t = db.tracks.findOne([uuid:uuid])      
     } finally {
       f.delete()
     }

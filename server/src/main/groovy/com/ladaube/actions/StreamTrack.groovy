@@ -22,14 +22,15 @@ class StreamTrack extends BaseAction {
 
   @DefaultHandler
   Resolution stream() {
-    def t = LaDaube.doInSession { s->
-      return s.getTrack(track)
+    return LaDaube.doInSession { s->
+      def t =s.getTrack(track)
+      if (t) {
+        s.db.stats_downloads << [userId: user._id, date: new Date(), trackId: t._id]
+        logger.debug("Streaming track $t._id")
+        return new TrackResolution(t)
+      }
+      return null
     }
-    if (t) {
-      logger.debug("Streaming track $t._id")
-      return new TrackResolution(t)
-    }
-    return null
   }
 
 }
