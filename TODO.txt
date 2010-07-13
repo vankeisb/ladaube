@@ -10,4 +10,4 @@ LaDaube TODO list
 * per-user sharing (all buddies or specified list)
 * get a better flash player : this one sucks
 * ajaxify upload in web ui
-
+* remove user clear password from the database

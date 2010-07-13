@@ -69,7 +69,7 @@ public class AuthenticationInterceptor implements Interceptor, AuthConstants {
         HttpSession session = request.getSession();
         Object user = session.getAttribute(SESSION_ATTR_CURRENT_USER);
         if (user!=null) {
-            log.debug("Found user in session : " + user);
+            log.debug("Found user in session");
             return true;
         } else {
             log.debug("nobody is authenticated for the current session");

@@ -597,7 +597,7 @@
 </div>
 <div id="loginBox" class="x-hidden">
     <p>
-        Logged in as <span class="loginName">${actionBean.user.id}</span>
+        Logged in as <span class="loginName">${actionBean.user.username}</span>
         - <a href="${pageContext.request.contextPath}/login?logout=true">logout</a>
     </p>
 </div>
