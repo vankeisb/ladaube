@@ -35,7 +35,7 @@ public class TrackImage extends BaseAction {
   }
 
   Resolution upload() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       def t = s.getTrack(track)
       s.createImageForTrack(t, data.fileName, data.inputStream)
     }
@@ -44,7 +44,7 @@ public class TrackImage extends BaseAction {
   }
 
   def getUserTracks() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       return s.getUserTracks(user, false, null)
     }
   }
@@ -52,7 +52,7 @@ public class TrackImage extends BaseAction {
   @DefaultHandler
   Resolution stream() {
     InputStream is
-    def t = LaDaube.get().doInSession { LaDaubeSession s ->
+    def t = LaDaube.doInSession { LaDaubeSession s ->
       return s.getTrack(track)
     }
     return new ImageResolution(t)
@@ -71,7 +71,7 @@ class ImageResolution extends StreamingResolution {
   }
 
   void stream(HttpServletResponse response) throws Exception {
-     LaDaube.get().doInSession { LaDaubeSession s ->
+     LaDaube.doInSession { LaDaubeSession s ->
       s.writeTrackImageToStream(t, response.getOutputStream())
      }
   }

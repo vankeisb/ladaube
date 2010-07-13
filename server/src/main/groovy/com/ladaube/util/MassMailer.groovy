@@ -53,7 +53,7 @@ PS : Evite de trop parler de tout �a, j'ai pas envie de finir en taule pour un
 
     def userNames = ['iou','jay-d','kakou','polo','remi','tof','tommy']
 
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       userNames.each { username ->
         def u = s.getUser(username)
         def mailStr = template.make(['username': u.id]).toString()

@@ -11,7 +11,7 @@ import com.ladaube.model.LaDaubeSession
 public class Populate extends BaseAction {
 
   Resolution doIt() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
 
       // create a bunch of users
       def remi = s.createUser('remi', 'remi')

@@ -40,7 +40,7 @@ public class Playlists extends BaseAction {
 
   @FatClientEvent(alternateResolution = 'jsonList')
   Resolution createPlaylist() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       pl = s.createPlaylist(user, name)
     }
     return new RedirectResolution('/playlists');
@@ -48,7 +48,7 @@ public class Playlists extends BaseAction {
 
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution addTracks() {
-    LaDaube.get().doInSession{ LaDaubeSession s ->
+    LaDaube.doInSession{ LaDaubeSession s ->
       pl = s.getPlaylist(playlist)
       tracks.each { t->
         def track = s.getTrack(t)
@@ -62,7 +62,7 @@ public class Playlists extends BaseAction {
 
   @FatClientEvent(alternateResolution = 'jsonList')
   Resolution delete() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       pl = s.getPlaylist(playlist)
       s.deletePlaylist(pl)
     }
@@ -71,7 +71,7 @@ public class Playlists extends BaseAction {
 
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution removeTracks() {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       pl = s.getPlaylist(playlist)
       tracks.each { String tId ->
         def t = s.getTrack(tId)
@@ -95,14 +95,14 @@ public class Playlists extends BaseAction {
 
   def getPlaylists() {
     def res = []
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       return s.getPlaylists(user)
     }
   }
 
   def getTracksInPlaylist() {
     def tracks = []
-    LaDaube.get().doInSession {LaDaubeSession s ->
+    LaDaube.doInSession {LaDaubeSession s ->
       return s.getTracksInPlaylist(pl)
     }
   }

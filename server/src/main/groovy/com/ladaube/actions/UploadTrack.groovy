@@ -40,7 +40,7 @@ public class UploadTrack extends BaseAction {
   @FatClientEvent(alternateResolution = 'uploadRpc')
   Resolution upload() {
     track = null
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       String fileName = data.fileName
       int i = data.fileName.lastIndexOf('.')
       if (i!=-1) {

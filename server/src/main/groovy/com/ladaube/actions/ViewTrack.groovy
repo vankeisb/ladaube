@@ -25,7 +25,7 @@ public class ViewTrack extends BaseAction {
 
   Resolution displayJson() {
     JsonUtil u = new JsonUtil()
-    def t = LaDaube.get().doInSession{ s ->
+    def t = LaDaube.doInSession{ s ->
       return s.getTrack(track)
     }
     return u.resolution(u.trackToJson(t).toString())

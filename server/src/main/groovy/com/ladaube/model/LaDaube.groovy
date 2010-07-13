@@ -1,24 +1,31 @@
 package com.ladaube.model
 
+import com.gmongo.GMongo
+
 public class LaDaube {
 
-  private String baseDir
+  private final GMongo mongo
 
   private static final LaDaube INSTANCE = new LaDaube()
 
-  public static LaDaube get() {
-    return INSTANCE
-  }
-
   private LaDaube() {
+    // one Mongo for the whole App
+    println """
+ _          _               _
+| |  __    | |  __   _   _ | | __  ___
+| | /  \\  _| | /  \\ | | | || |/  \\/ _ \\_
+| |/ __ \\|   |/ __ \\| |_| ||   * || __/ /
+|___/  \\_____/_/  \\_\\_____/|_|\\__/\\____/  v1.0-alpha
+"""
+    mongo = new GMongo("127.0.0.1", 27017)
   }
 
-  LaDaubeSession createSession() {
-    return new LaDaubeSession()
+  private LaDaubeSession createSession() {
+    return new LaDaubeSession(mongo)
   }
 
-  def doInSession(Closure c) {
-    LaDaubeSession s = createSession()
+  static def doInSession(Closure c) {
+    LaDaubeSession s = INSTANCE.createSession()
     return c.call(s)
   }
 }

@@ -10,6 +10,9 @@
         ladaube
     </description>
     <display-name>ladaube</display-name>
+    <listener>
+        <listener-class>com.ladaube.util.LaDaubeInitListener</listener-class>
+    </listener>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

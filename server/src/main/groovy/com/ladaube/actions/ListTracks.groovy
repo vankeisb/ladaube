@@ -34,7 +34,7 @@ public class ListTracks extends BaseAction {
   Resolution displayJson() {
     long startTime = System.currentTimeMillis()
     JsonUtil u = new JsonUtil()
-    def tracks = LaDaube.get().doInSession { LaDaubeSession s ->
+    def tracks = LaDaube.doInSession { LaDaubeSession s ->
       if (playlistId) {
         def p = s.getPlaylist(playlistId)
         return s.getTracksInPlaylist(p)

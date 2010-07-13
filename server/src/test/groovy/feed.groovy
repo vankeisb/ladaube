@@ -3,8 +3,8 @@ import com.ladaube.model.LaDaubeSession
 
 class Feed {
 
-  public static void main_(String[] args) {
-    LaDaube.get().doInSession { LaDaubeSession s ->
+  public static void main(String[] args) {
+    LaDaube.doInSession { LaDaubeSession s ->
       ['remi', 'eva', 'flow', 'alex', 'kakou'].each { u ->
         for (int i=0 ; i < 10000; i++) {
           def str = u + '_' + i

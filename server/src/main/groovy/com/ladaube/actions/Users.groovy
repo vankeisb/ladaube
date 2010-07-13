@@ -38,7 +38,7 @@ class Users extends BaseAction {
 
     users = []
     usersMap = [:]
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       s.getUsers().each { u ->
         users << u
         usersMap.put(u, s.getBuddies(u))
@@ -61,7 +61,7 @@ class Users extends BaseAction {
       throw new IllegalStateException("this page is protected")
     }
 
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       def u = s.createUser(username, username)
       u.email = email
       s.updateUser(u)
@@ -76,7 +76,7 @@ class Users extends BaseAction {
       throw new IllegalStateException("this page is protected")
     }
     
-    LaDaube.get().doInSession { LaDaubeSession s ->
+    LaDaube.doInSession { LaDaubeSession s ->
       def u1 = s.getUser(username)
       def u2 = s.getUser(buddy)
       s.makeBuddies(u1, u2)

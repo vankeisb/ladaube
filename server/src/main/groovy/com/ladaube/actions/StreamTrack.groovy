@@ -22,7 +22,7 @@ class StreamTrack extends BaseAction {
 
   @DefaultHandler
   Resolution stream() {
-    def t = LaDaube.get().doInSession { s->
+    def t = LaDaube.doInSession { s->
       return s.getTrack(track)
     }
     if (t) {
@@ -45,7 +45,7 @@ class TrackResolution extends StreamingResolution {
   }
 
   void stream(HttpServletResponse response) throws Exception {
-     LaDaube.get().doInSession { LaDaubeSession s ->
+     LaDaube.doInSession { LaDaubeSession s ->
       s.writeTrackDataToStream(t, response.getOutputStream())
      }
   }

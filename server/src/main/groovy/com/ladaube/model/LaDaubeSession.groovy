@@ -15,19 +15,20 @@ import com.mongodb.gridfs.GridFSFile
 import java.util.regex.Pattern
 import org.bson.types.ObjectId
 
-public class LaDaubeSession {
+class LaDaubeSession {
 
-  private static final String DB_NAME = 'ladaube-couch'
-
-  GMongo mongo
   def db
   private boolean indexCreated = false
 
   private static final Logger logger = Logger.getLogger(LaDaubeSession.class)
 
-  def LaDaubeSession() {
-    mongo = new GMongo("127.0.0.1", 27017)
-    db = mongo.getDB('ladaube')
+  def LaDaubeSession(GMongo mongo) {
+    String dbName = System.getProperty("ladaube.db.name", "ladaube")
+    db = mongo.getDB(dbName)
+    ensureIndexes()
+  }
+
+  def ensureIndexes() {
     if (!indexCreated) {
       [
               [userId:1],
@@ -41,7 +42,7 @@ public class LaDaubeSession {
               [searchData:1],
               [postedOn:1]
       ].each { indx ->
-        db.tracks.ensureIndex(indx)      
+        db.tracks.ensureIndex(indx)
       }
       indexCreated = true
     }

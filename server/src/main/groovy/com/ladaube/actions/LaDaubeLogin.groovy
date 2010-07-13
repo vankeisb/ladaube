@@ -20,7 +20,7 @@ public class LaDaubeLogin extends LoginActionBean {
   private static final Logger logger = Logger.getLogger(LaDaubeLogin.class)
 
   protected def authenticate() {
-    def u = LaDaube.get().doInSession { LaDaubeSession s ->
+    def u = LaDaube.doInSession { LaDaubeSession s ->
       try {
         logger.info("Trying to authenticate $username")
         return s.getUser(username);

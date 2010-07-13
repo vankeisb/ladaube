@@ -26,7 +26,7 @@ public class Buddies extends BaseAction {
   }
 
   def getBuddies() {
-    return LaDaube.get().doInSession { LaDaubeSession s ->
+    return LaDaube.doInSession { LaDaubeSession s ->
       return s.getBuddies(user)
     }
   }

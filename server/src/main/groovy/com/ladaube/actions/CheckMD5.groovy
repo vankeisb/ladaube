@@ -16,7 +16,7 @@ class CheckMD5 extends BaseAction {
 
   @DefaultHandler
   Resolution check() {
-    LaDaube.get().doInSession { LaDaubeSession s->
+    LaDaube.doInSession { LaDaubeSession s->
       boolean found = s.checkMD5(getUser(), md5)
       JsonUtil ju = new JsonUtil()
       String json = "{found:$found}"
