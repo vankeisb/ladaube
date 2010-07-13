@@ -35,6 +35,12 @@
             <artifactId>stripes</artifactId>
             <version>1.6-SNAPSHOT</version>
         </dependency>
+        <!-- TODO remove after import -->
+        <dependency>
+          <groupId>org.codehaus.groovy.modules.http-builder</groupId>
+          <artifactId>http-builder</artifactId>
+          <version>0.5.0-RC2</version>
+        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
