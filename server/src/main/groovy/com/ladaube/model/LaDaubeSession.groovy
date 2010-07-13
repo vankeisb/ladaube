@@ -21,12 +21,30 @@ public class LaDaubeSession {
 
   GMongo mongo
   def db
+  private boolean indexCreated = false
 
   private static final Logger logger = Logger.getLogger(LaDaubeSession.class)
 
   def LaDaubeSession() {
     mongo = new GMongo("127.0.0.1", 27017)
     db = mongo.getDB('ladaube')
+    if (!indexCreated) {
+      [
+              [userId:1],
+              [md5:1],
+              [name:1],
+              [artist:1],
+              [albumArtist:1],
+              [year:1],
+              [genre:1],
+              [trackNumber:1],
+              [searchData:1],
+              [postedOn:1]
+      ].each { indx ->
+        db.tracks.ensureIndex(indx)      
+      }
+      indexCreated = true
+    }
   }
 
   def getUser(String username) {
