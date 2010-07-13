@@ -156,7 +156,7 @@
             Ext.fly('song-details').hide();
 
             var myView = new Ext.ux.grid.livegrid.GridView({
-                nearLimit : 50,
+                nearLimit : 100,
                 loadMask  : {
                     msg :  'Buffering...'
                 }
@@ -518,15 +518,17 @@
                                     failure: function() { alert('error !'); },
                                     success: function(response) {
                                         Ext.example.msg('Tracks removed', 'Removed ' + i + ' track(s).');
-                                        var data = Ext.util.JSON.decode(response.responseText);
-                                        store.loadData(data);
+                                        store.setBaseParam('playlistId', params.playlist);
+                                        store.load();
+                                        // set mode to playlist
+                                        mode = 1;
                                     }
                                 });
                             }
                         }
                     }
                 ]
-            });
+            });            
 
             tracksGrid.on('rowcontextmenu', function(dataView, rowIndex, e) {
                 // only on playlist view for now

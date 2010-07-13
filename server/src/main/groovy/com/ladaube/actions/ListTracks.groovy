@@ -40,15 +40,14 @@ public class ListTracks extends BaseAction {
         return s.getTracksInPlaylist(p)
       } else {
         def buddy = buddyId==null ? user : s.getUser(buddyId)
-        boolean includeBuddies = buddy.id==user.id
+        boolean includeBuddies = buddy.username==user.username
         return s.getUserTracks(buddy, includeBuddies, query, start, limit, sort, dir)
       }
     }
-    def tracksList = tracks.toArray()
-    Long totalLen = tracksList.size()    
+    Long totalLen = tracks.count()
     long elapsed = System.currentTimeMillis() - startTime
     logger.debug("List tracks took $elapsed ms")
-    return u.resolution(u.tracksToJson(tracksList, false, totalLen).toString())
+    return u.resolution(u.tracksToJson(tracks.toArray(), false, totalLen).toString())
   }
 
 }

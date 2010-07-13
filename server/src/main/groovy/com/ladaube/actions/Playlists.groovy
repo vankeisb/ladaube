@@ -16,10 +16,10 @@ import com.ladaube.model.LaDaubeSession
 @RequiresAuthentication
 public class Playlists extends BaseAction {
 
-  def playlist
+  def pl
 
   @Validate(required = true, on = ['tracks','addTracks','delete', 'removeTracks'])
-  String playlistId
+  String playlist
 
   @Validate(required=true, on=['addTracks', 'removeTracks'])
   List<String> tracks
@@ -41,7 +41,7 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonList')
   Resolution createPlaylist() {
     LaDaube.get().doInSession { LaDaubeSession s ->
-      playlist = s.createPlaylist(user, name)
+      pl = s.createPlaylist(user, name)
     }
     return new RedirectResolution('/playlists');
   }
@@ -49,21 +49,22 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution addTracks() {
     LaDaube.get().doInSession{ LaDaubeSession s ->
-      playlist = s.getPlaylist(playlistId)
+      pl = s.getPlaylist(playlist)
       tracks.each { t->
-        s.addTrackToPlaylist(t, playlist)
+        def track = s.getTrack(t)
+        s.addTrackToPlaylist(track, pl)
       }
     }
     return new RedirectResolution('/playlists').
-            addParameter('playlist', playlist.id).
+            addParameter('playlist', pl._id).
             addParameter('tracks', 'true')
   }
 
   @FatClientEvent(alternateResolution = 'jsonList')
   Resolution delete() {
     LaDaube.get().doInSession { LaDaubeSession s ->
-      playlist = s.getPlaylist(playlistId)       
-      s.deletePlaylist(playlist)
+      pl = s.getPlaylist(playlist)
+      s.deletePlaylist(pl)
     }
     return new RedirectResolution('/playlists')
   }
@@ -71,14 +72,14 @@ public class Playlists extends BaseAction {
   @FatClientEvent(alternateResolution = 'jsonTracks')
   Resolution removeTracks() {
     LaDaube.get().doInSession { LaDaubeSession s ->
-      playlist = s.getPlaylist(playlistId)      
+      pl = s.getPlaylist(playlist)
       tracks.each { String tId ->
         def t = s.getTrack(tId)
-        s.removeTrackFromPlaylist(t, playlist)
+        s.removeTrackFromPlaylist(t, pl)
       }
     }
     return new RedirectResolution('/playlists').
-            addParameter('playlist', playlist.id).
+            addParameter('playlist', playlist).
             addParameter('tracks', 'true')
   }
 
@@ -102,7 +103,7 @@ public class Playlists extends BaseAction {
   def getTracksInPlaylist() {
     def tracks = []
     LaDaube.get().doInSession {LaDaubeSession s ->
-      return s.getTracksInPlaylist(playlist)
+      return s.getTracksInPlaylist(pl)
     }
   }
 

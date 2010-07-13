@@ -130,7 +130,13 @@ public class LaDaubeSession {
     def res = db.tracks.find(findCrit)
     if (sort) {
       int dirInt = dir == 'ASC' ? 1 : -1
-      res = res.sort(new BasicDBObject(sort, dirInt))
+      res.sort(new BasicDBObject(sort, dirInt))
+    }
+    if (limit) {
+      res.limit(limit)
+    }
+    if (start) {
+      res.skip(start)
     }
     return res
   }

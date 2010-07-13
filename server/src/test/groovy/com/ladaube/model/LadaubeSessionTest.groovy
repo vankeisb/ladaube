@@ -437,4 +437,49 @@ class LadaubeSessionTest extends GroovyTestCase {
     }
   }
 
+  void testSkipAndLimit() {
+    createTracksAndUsers()
+
+
+    LaDaube.get().doInSession { LaDaubeSession s ->
+
+      // remove all tracks
+      s.db.tracks.remove([:])
+      assert s.db.tracks.count() == 0
+
+      // create a bunch of tracks
+      ['remi', 'alex'].each { u ->
+        for (int i=0 ; i < 1000; i++) {
+          def str = u + '_' + i
+          s.db.tracks << [
+                  fileName: str,
+                  userId:u,
+                  contentLen:12345,
+                  md5:str,
+                  name:str,
+                  artist:str,
+                  albumArtist:str,
+                  year: i,
+                  genre: "toto",
+                  trackNumber: i,
+                  searchData: str,
+                  postedOn: new Date()
+          ]
+          println "Added track $i for $u"
+        }
+      }
+
+      // list tracks with limit
+      def user = s.getUser('remi')
+      def tracks = s.getUserTracks(user, true, null, 0, 1000, null, null)
+      def c = tracks.count()
+      println "count = $c"
+      assert c == 2000
+      def tracksList = tracks.toArray()
+      def c2 = tracksList.size()
+      println "count2 = $c2"
+      assert c2 == 1000
+    }
+  }
+
 }
