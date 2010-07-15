@@ -336,66 +336,71 @@
                                 minWidth: 150,
                                 border: false,
                                 split:true,
-                                collapsible: true,
-                                collapseMode: 'mini',
-                                header: false,
+                                layout: 'border',
                                 items: [
                                     {
                                         title: 'Home',
-                                        collapsible: false,
                                         border: false,
+                                        region: 'north',
                                         iconCls: 'home-icon',
                                         contentEl: 'home'
                                     },
                                     {
-                                        title: 'Playlists',
-                                        collapsible: true,
-                                        titleCollapse: true,
-                                        iconCls: 'playlists-icon',
-                                        items : [playlistsGrid],
-                                        collapseFirst: false,
-                                        tools : [
+                                        layout:'accordion',                                        
+                                        region: 'center',
+                                        items: [
                                             {
-                                                id: 'plus',
-                                                qtip: 'Create new playlist',
-                                                handler: function(event, toolEl, panel) {
-                                                    Ext.MessageBox.prompt('Name', 'Enter the name of the playlist:', function(btn, text) {
-                                                        Ext.Ajax.request({
-                                                            url:'playlists',
-                                                            params: {
-                                                                createPlaylist: true,
-                                                                name: text,
-                                                                json: true
-                                                            },
-                                                            failure: function() { alert('error !'); },
-                                                            success: function(response) {
-                                                                playlistsStore.load();
-                                                            }
-                                                        });
-                                                    });
-                                                }
+                                                title: 'Playlists',
+                                                iconCls: 'playlists-icon',
+                                                items : [playlistsGrid],
+                                                id: 'plPanel',
+                                                autoScroll: true,                                                
+                                                hideCollapseTool: true,
+                                                tools : [
+                                                    {
+                                                        id: 'plus',
+                                                        qtip: 'Create new playlist',
+                                                        handler: function(event, toolEl, panel) {
+                                                            Ext.MessageBox.prompt('Name', 'Enter the name of the playlist:', function(btn, text) {
+                                                                Ext.Ajax.request({
+                                                                    url:'playlists',
+                                                                    params: {
+                                                                        createPlaylist: true,
+                                                                        name: text,
+                                                                        json: true
+                                                                    },
+                                                                    failure: function() { alert('error !'); },
+                                                                    success: function(response) {
+                                                                        playlistsStore.load();
+                                                                    }
+                                                                });
+                                                            });
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                title: 'Buddies',
+                                                iconCls: 'buddies-icon',
+                                                items : [buddiesGrid],
+                                                autoScroll: true,                                                
+                                                hideCollapseTool: true,
+                                                tools : [
+                                                    {
+                                                        id: 'plus',
+                                                        qtip: 'Invite buddy'
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                title: 'Upload',
+                                                autoScroll: true,
+                                                iconCls: 'upload-icon',
+                                                hideCollapseTool: true,
+                                                contentEl: 'upload'
                                             }
                                         ]
-                                    },
-                                    {
-                                        title: 'Buddies',
-                                        collapsible: true,
-                                        titleCollapse: true,
-                                        iconCls: 'buddies-icon',
-                                        items : [buddiesGrid],
-                                        collapseFirst: false,
-                                        tools : [
-                                            {
-                                                id: 'plus',
-                                                qtip: 'Invite buddy'
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        title: 'Upload',
-                                        iconCls: 'upload-icon',                                        
-                                        contentEl: 'upload'
-                                    }                                        
+                                    }
                                 ]
                             },
                             tracksGrid

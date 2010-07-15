@@ -1,16 +1,19 @@
 package com.ladaube.util
 
-import static groovyx.net.http.ContentType.JSON
-import groovyx.net.http.RESTClient
 import com.ladaube.model.LaDaube
 import com.ladaube.model.LaDaubeSession
+/*
 import static groovyx.net.http.Method.GET
 import static groovyx.net.http.ContentType.BINARY
+import static groovyx.net.http.ContentType.JSON
+import groovyx.net.http.RESTClient
+*/
 
 class CouchImport {
 
   static void main(String[] args) {
 
+  /*
     LaDaube.doInSession { LaDaubeSession s->
 
 
@@ -95,6 +98,6 @@ class CouchImport {
 
     }
     
-
+*/
   }
 }
