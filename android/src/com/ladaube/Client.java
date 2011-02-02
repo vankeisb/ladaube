@@ -16,7 +16,7 @@ public class Client {
         reinit();
     }
 
-    private String baseUrl = "http://192.168.1.10:8080/ladaube";
+    private String baseUrl = "http://9.128.98.31:8080/ladaube";
 
     public String getBaseUrl() {
         return baseUrl;

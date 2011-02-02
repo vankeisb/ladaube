@@ -10,9 +10,10 @@ import com.ladaube.model.LaDaube
 import javax.servlet.http.HttpServletResponse
 import net.sourceforge.stripes.util.Log
 import com.ladaube.model.LaDaubeSession
+import com.ladaube.util.LaDaubeHttpSessionListener
+import javax.servlet.http.HttpSession
 
 @UrlBinding('/stream/{track}')
-@RequiresAuthentication
 class StreamTrack extends BaseAction {
 
   private static final Log logger = Log.getInstance(StreamTrack.class);
@@ -20,12 +21,22 @@ class StreamTrack extends BaseAction {
   @Validate(required=true)
   String track
 
+  String jsessionid
+
   @DefaultHandler
   Resolution stream() {
+    def u = getUser();
+    if (u==null && jsessionid!=null) {
+      HttpSession s = LaDaubeHttpSessionListener.getSession(jsessionid);
+      u = getUser(s);
+    }
+    if (u==null) {
+      throw new IllegalStateException("Unable to find a user for session")
+    }
     return LaDaube.doInSession { s->
       def t =s.getTrack(track)
       if (t) {
-        s.db.stats_downloads << [userId: user._id, date: new Date(), trackId: t._id]
+        s.db.stats_downloads << [userId: u._id, date: new Date(), trackId: t._id]
         logger.debug("Streaming track $t._id")
         return new TrackResolution(t)
       }

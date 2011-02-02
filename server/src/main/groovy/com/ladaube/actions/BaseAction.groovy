@@ -4,6 +4,7 @@ import net.sourceforge.stripes.action.ActionBean
 import net.sourceforge.stripes.action.ActionBeanContext
 
 import com.ladaube.util.auth.AuthConstants
+import javax.servlet.http.HttpSession
 
 public abstract class BaseAction implements ActionBean {
 
@@ -19,7 +20,11 @@ public abstract class BaseAction implements ActionBean {
   }
 
   public def getUser() {
-    return context.request.session.getAttribute(AuthConstants.SESSION_ATTR_CURRENT_USER)
+    return getUser(context.request.session)
+  }
+
+  public def getUser(HttpSession s) {
+    return s.getAttribute(AuthConstants.SESSION_ATTR_CURRENT_USER)
   }
   
 }

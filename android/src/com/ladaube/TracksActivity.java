@@ -32,7 +32,7 @@ public class TracksActivity extends ListActivity {
                 // play track !
                 Track t = tracksAdapter.getItem(position);
                 try {
-                    String url = Client.getInstance().getBaseUrl() + "/stream?track=" + t.getId() + ";JSESSIONID=" + Client.getInstance().getSessionId();
+                    String url = Client.getInstance().getBaseUrl() + "/stream/" + t.getId() + "?jsessionid=" + Client.getInstance().getSessionId();
                     MediaPlayer mp = new MediaPlayer();
                     mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         public void onCompletion(MediaPlayer mediaPlayer) {
