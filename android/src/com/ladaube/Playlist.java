@@ -7,12 +7,10 @@ public class Playlist implements Serializable {
 
     private final String id;
     private final String name;
-    private final List<String> trackIds;
 
-    public Playlist(String id, String name, List<String> trackIds) {
+    public Playlist(String id, String name) {
         this.id = id;
         this.name = name;
-        this.trackIds = trackIds;
     }
 
     public String getId() {
@@ -21,10 +19,6 @@ public class Playlist implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public List<String> getTrackIds() {
-        return trackIds;
     }
 
     @Override

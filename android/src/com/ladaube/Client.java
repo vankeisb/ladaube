@@ -1,37 +1,51 @@
 package com.ladaube;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.*;
 
 public class Client {
 
-    private List<Album> albums = new ArrayList<Album>();
-    private List<Artist> artists = new ArrayList<Artist>();
-    private Map<Artist, List<Album>> albumsForArtist = new HashMap<Artist, List<Album>>();
-    private List<Track> tracks = new ArrayList<Track>();
-    private List<Playlist> playlists = new ArrayList<Playlist>();
+    private HttpClient httpClient;
+
+    private List<Playlist> playlists;
+    private List<Track> tracks;
 
     private Client() {
-        Album rootsAndGrooves = new Album("1", "Roots and Grooves", "Maceo Parker");
-        Album lifeOnPlanetGroove = new Album("2", "Life on planet Groove", "Maceo Parker");
-        Album callingElvis = new Album("3", "Calling Elvis", "Dire Straits");
-        albums.add(rootsAndGrooves);
-        albums.add(lifeOnPlanetGroove);
-        albums.add(callingElvis);
+        reinit();
+    }
 
-        Artist maceo = new Artist("1", "Maceo Parker");
-        Artist direStraits = new Artist("2", "Dire Straits");
-        artists.add(maceo);
-        artists.add(direStraits);
+    public void reinit() {
+        httpClient = new HttpClient("http://192.168.1.10:8080/ladaube");
+        try {
+            // authenticate the user
+            JSONObject resp = httpClient.jsonGet("/login?login=true&json=true&username=remi&password=remi");
+            // TODO check response
 
-        albumsForArtist.put(maceo, Arrays.asList(rootsAndGrooves, lifeOnPlanetGroove));
-        albumsForArtist.put(direStraits, Arrays.asList(callingElvis));
+            // pre-load playlists and tracks list (TO BE OPTIMIZED)
+            JSONArray jsonPlaylists = httpClient.jsonGetArray("/playlists?json=true");
+            playlists = new ArrayList<Playlist>();
+            for (int i=0 ; i<jsonPlaylists.length() ; i++) {
+                JSONObject jp = (JSONObject)jsonPlaylists.get(i);
+                playlists.add(new Playlist(jp.getString("id"), jp.getString("name")));
+            }
 
-        tracks.add(new Track("1", "Track1", rootsAndGrooves));
-        tracks.add(new Track("2", "Track2", rootsAndGrooves));
-        tracks.add(new Track("4", "The Bug", callingElvis));
-
-        Playlist groovyStuff = new Playlist("1", "Groovy Stuff", Arrays.asList("1", "4"));
-        playlists.add(groovyStuff);
+            // tracks
+            tracks = new ArrayList<Track>();
+            JSONObject jsonTracks = httpClient.jsonGet("/list?json=true");
+            JSONArray data = jsonTracks.getJSONArray("data");
+            for (int i=0 ; i<data.length() ; i++) {
+                JSONObject jsonTrack = data.getJSONObject(i);
+                tracks.add(new Track(
+                        jsonTrack.getString("id"),
+                        jsonTrack.getString("name"),
+                        jsonTrack.getString("album"),
+                        jsonTrack.getString("artist")));
+            }
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static Client INSTANCE;
@@ -44,58 +58,70 @@ public class Client {
     }
 
     public List<Album> getAlbums(Artist artist) {
-        if (artist==null) {
-            // return all albums
-            return Collections.unmodifiableList(albums);
-        } else {
-            // return albums for passed artist
-            List<Album> l = albumsForArtist.get(artist);
-            if (l==null) {
-                return Collections.emptyList();
+        Map<String,Album> albums = new HashMap<String,Album>();
+        for (Track t : tracks) {
+            String albumName = t.getAlbum();
+            if (!albums.containsKey(albumName)) {
+                boolean matches = true;
+                if (artist!=null && artist.getName()!=null) {
+                    matches = artist.getName().equals(t.getArtist());
+                }
+                if (matches) {
+                    Album a = new Album(albumName, albumName, t.getArtist());
+                    albums.put(albumName, a);
+                }
             }
-            return Collections.unmodifiableList(l);
         }
+        return new ArrayList<Album>(albums.values());
     }
 
     public List<Artist> getArtists() {
-        return Collections.unmodifiableList(artists);
+        Map<String,Artist> artists = new HashMap<String,Artist>();
+        for (Track t : tracks) {
+            String aName = t.getArtist();
+            if (!artists.containsKey(aName)) {
+                artists.put(aName, new Artist(aName, aName));
+            }
+        }
+        return new ArrayList<Artist>(artists.values());
     }
 
     public List<Track> getTracks(Album album) {
-        if (album==null) {
-            // return all tracks
-            return Collections.unmodifiableList(tracks);
-        } else {
-            // return tracks for album
-            ArrayList<Track> filtered = new ArrayList<Track>();
-            for (Track t : tracks) {
-                if (t.getAlbum().equals(album.getName())) {
-                    filtered.add(t);
-                }
-            }
-            return Collections.unmodifiableList(filtered);
-
-        }
-    }
-
-    public List<Playlist> getPlaylists() {
-        return Collections.unmodifiableList(playlists);
-
-    }
-
-    public List<Track> getTracksInPlaylist(Playlist playlist) {
-        List<String> ids = playlist.getTrackIds();
         ArrayList<Track> result = new ArrayList<Track>();
-        for (String id:ids) {
-            for (Track current : tracks) {
-                if (current.getId().equals(id)) {
-                    result.add(current);
-                    break;
+        for (Track t : tracks) {
+            if (album!=null) {
+                String aName = album.getName();
+                if (aName!=null && aName.equals(t.getAlbum())) {
+                    result.add(t);
                 }
+            } else {
+                result.add(t);
             }
         }
         return result;
     }
 
+    public List<Playlist> getPlaylists() {
+        return Collections.unmodifiableList(playlists);
+    }
+
+    public List<Track> getTracksInPlaylist(Playlist playlist) {
+        try {
+            ArrayList<Track> plTracks = new ArrayList<Track>();
+            JSONObject jsonTracks = httpClient.jsonGet("/list?json=true&playlistId=" + playlist.getId());
+            JSONArray data = jsonTracks.getJSONArray("data");
+            for (int i=0 ; i<data.length() ; i++) {
+                JSONObject jsonTrack = data.getJSONObject(i);
+                plTracks.add(new Track(
+                        jsonTrack.getString("id"),
+                        jsonTrack.getString("name"),
+                        jsonTrack.getString("album"),
+                        jsonTrack.getString("artist")));
+            }
+            return plTracks;
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

@@ -9,11 +9,11 @@ public class Track implements Serializable {
     private final String album;
     private final String artist;
 
-    public Track(String id, String name, Album album) {
+    public Track(String id, String name, String album, String artist) {
         this.id = id;
         this.name = name;
-        this.album = album.getName();
-        this.artist = album.getArtist();
+        this.album = album;
+        this.artist = artist;
     }
 
     public String getId() {
