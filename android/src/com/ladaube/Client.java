@@ -16,8 +16,18 @@ public class Client {
         reinit();
     }
 
+    private String baseUrl = "http://192.168.1.10:8080/ladaube";
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public String getSessionId() {
+        return httpClient.getSessionId();
+    }
+
     public void reinit() {
-        httpClient = new HttpClient("http://192.168.1.10:8080/ladaube");
+        httpClient = new HttpClient(baseUrl);
         try {
             // authenticate the user
             JSONObject resp = httpClient.jsonGet("/login?login=true&json=true&username=remi&password=remi");

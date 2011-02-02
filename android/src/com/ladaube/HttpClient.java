@@ -4,12 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +30,12 @@ public class HttpClient {
         this.ladaubeUrl = ladaubeUrl;
     }
 
+    private String sessionId;
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
     private String sendHttpGetAndGetString(String url) throws IOException {
 
         HttpGet httpRequest = new HttpGet(ladaubeUrl+url);
@@ -39,6 +47,14 @@ public class HttpClient {
         long t = System.currentTimeMillis();
         HttpResponse response = httpclient.execute(httpRequest);
         Log.i(TAG, "HTTPResponse received in [" + (System.currentTimeMillis() - t) + "ms]");
+
+        // grab last session id
+        List<Cookie> cookies = httpclient.getCookieStore().getCookies();
+        for (Cookie c : cookies) {
+            if (c.getName().toLowerCase().equals("jsessionid")) {
+                sessionId = c.getValue();
+            }
+        }
 
         // Get hold of the response entity (-> the data):
         HttpEntity entity = response.getEntity();

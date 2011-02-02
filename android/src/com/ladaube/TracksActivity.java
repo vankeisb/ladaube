@@ -3,6 +3,7 @@ package com.ladaube;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -30,7 +31,21 @@ public class TracksActivity extends ListActivity {
                                     int position, long id) {
                 // play track !
                 Track t = tracksAdapter.getItem(position);
-                System.out.println("Playing " + t);
+                try {
+                    String url = Client.getInstance().getBaseUrl() + "/stream?track=" + t.getId() + ";JSESSIONID=" + Client.getInstance().getSessionId();
+                    MediaPlayer mp = new MediaPlayer();
+                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+                            mediaPlayer.release();
+                        }
+                    });
+                    mp.setDataSource(url);
+                    mp.prepare();
+                    mp.start();
+                } catch(Exception e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         });
     }
