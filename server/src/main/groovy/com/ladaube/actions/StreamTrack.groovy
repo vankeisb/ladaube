@@ -13,7 +13,7 @@ import com.ladaube.model.LaDaubeSession
 import com.ladaube.util.LaDaubeHttpSessionListener
 import javax.servlet.http.HttpSession
 
-@UrlBinding('/stream/{track}')
+@UrlBinding('/stream/{track}/{jsessionid}')
 class StreamTrack extends BaseAction {
 
   private static final Log logger = Log.getInstance(StreamTrack.class);

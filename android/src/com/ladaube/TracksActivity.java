@@ -32,13 +32,14 @@ public class TracksActivity extends ListActivity {
                 // play track !
                 Track t = tracksAdapter.getItem(position);
                 try {
-                    String url = Client.getInstance().getBaseUrl() + "/stream/" + t.getId() + "?jsessionid=" + Client.getInstance().getSessionId();
+                    String url = Client.getInstance().getBaseUrl() + "/stream/" + t.getId() + "/" + Client.getInstance().getSessionId();
+//                    String url = "http://www.rvkb.com/pub/piano.mp3";
                     MediaPlayer mp = new MediaPlayer();
-                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        public void onCompletion(MediaPlayer mediaPlayer) {
-                            mediaPlayer.release();
-                        }
-                    });
+//                    mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                        public void onCompletion(MediaPlayer mediaPlayer) {
+//                            mediaPlayer.release();
+//                        }
+//                    });
                     mp.setDataSource(url);
                     mp.prepare();
                     mp.start();
