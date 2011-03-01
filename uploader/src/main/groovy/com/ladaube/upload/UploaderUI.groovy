@@ -277,7 +277,7 @@ class UploaderUI {
   private static final String LAF = "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel";
 
   public static void main(String[] args) {    
-    UploaderUI ui = new UploaderUI(url: 'http://rvkb.dyndns.info/ladaube', username: '', password: '')
+    UploaderUI ui = new UploaderUI(url: 'http://babz.hd.free.fr/ladaube', username: '', password: '')
     ui.display()
   }
 }

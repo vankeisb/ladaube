@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp
     spec="1.0+"
-    codebase="http://rvkb.dyndns.info/ladaube/webstart/"
+    codebase="http://babz.hd.free.fr/ladaube/webstart/"
     href="$outputFile">
   <information>
     <vendor>LaDaube</vendor>

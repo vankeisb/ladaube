@@ -17,7 +17,7 @@
 		<module>common</module>
         <module>uploader</module>
 		<module>server</module>
-        <module>android</module>
+        <!--module>android</module-->
 	</modules>
     <build>
         <plugins>
