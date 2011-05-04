@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title id="page-title">LaDaube</title>
 
-    <script type="text/javascript" language="javascript" src="player/niftyplayer.js"></script>
+    <script src="${pageContext.request.contextPath}/js/audiojs/audiojs/audio.min.js"></script>
 
     <!--  ext JS 3.0 -->
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/ext-all.css"/>
@@ -21,11 +21,17 @@
 
     <script type="text/javascript">
 
+        var audio;
+        audiojs.events.ready(function() {
+          audio = audiojs.createAll();
+        });
+
+
         Ext.BLANK_IMAGE_URL = 'js/ext-3.0.3/resources/images/default/s.gif';
         Ext.onReady(function() {
 
             var getPlayer = function() {
-                return niftyplayer('niftyPlayer1');
+                return audio[0];
             };
 
             var Player = Ext.extend(Ext.util.Observable, {
@@ -50,8 +56,11 @@
                     }
                     var trackId = this.playlist[this.current];
                     var url = 'stream/' + trackId;
-                    getPlayer().loadAndPlay(url);
-                    getPlayer().registerEvent('onSongOver',"window.player.notifySongOver();");
+
+                    // play track
+                    getPlayer().load(url);
+                    getPlayer().play();
+
                     // update track details
                     Ext.Ajax.request({
                         url:'track',
@@ -586,12 +595,7 @@
 <div id="banner" class="x-hidden">
     <%@ include file="../logo.jsp"%>
     <div id="player">
-        <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" width="165" height="37" id="niftyPlayer1" align="">
-            <param name=quality value=high>
-            <param name=bgcolor value=#FFFFFF>
-            <embed src="player/niftyplayer.swf" quality=high bgcolor=#FFFFFF width="165" height="37" name="niftyPlayer1" align="" type="application/x-shockwave-flash" swLiveConnect="true" pluginspage="http://www.macromedia.com/go/getflashplayer">
-            </embed>
-        </object>
+        <audio></audio>
     </div>
     <div id="song-details" class="msg-div">
         <img id="track-image" src="../../images/unknown.jpg" alt="track image"/>
