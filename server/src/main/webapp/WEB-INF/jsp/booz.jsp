@@ -21,17 +21,19 @@
 
     <script type="text/javascript">
 
-        var a;
         audiojs.events.ready(function() {
-          a = audiojs.createAll({
-            trackEnded: function() {
-                if (window.player) {
-                    window.player.notifySongOver();
+            a = audiojs.createAll({
+                trackEnded: function() {
+                    if (window.player) {
+                        window.player.notifySongOver();
+                    }
                 }
-            }
-          });
+            });
         });
 
+    </script>
+
+    <script type="text/javascript">
 
         Ext.BLANK_IMAGE_URL = 'js/ext-3.0.3/resources/images/default/s.gif';
         Ext.onReady(function() {
@@ -47,7 +49,7 @@
 
                 constructor: function(config) {
                     Player.superclass.constructor.call(config);
-                    this.addEvents(['songOver']);
+                    this.addEvents(['songStarted','songOver']);
                 },
 
                 play: function(playlist) {
@@ -60,12 +62,14 @@
                     if (this.current < this.playlist.length-1) {
                         this.current++;
                     }
-                    var trackId = this.playlist[this.current];
+                    var plItem = this.playlist[this.current];
+                    var trackId = plItem.id;
                     var url = 'stream/' + trackId;
 
                     // play track
                     getPlayer().load(url);
                     getPlayer().play();
+                    this.fireEvent('songStarted', plItem);
 
                     // update track details
                     Ext.Ajax.request({
@@ -99,7 +103,6 @@
                 }
             });
             window.player = new Player({});
-
 
             Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
             
@@ -254,13 +257,19 @@
                 var recNum = store.bufferRange[0];
                 store.each(function(rec) {
                     if (recNum >= index) {
-                        playlist.push(rec.data.id);
+                        playlist.push({id:rec.data.id, recNum:recNum});
                     }
                     recNum++;
                     return true;
                 });
                 // invoke player
                 window.player.play(playlist);
+            });
+
+            window.player.on('songStarted', function(plItem) {
+                var recNum = plItem.recNum;
+                var selModel = tracksGrid.selModel;
+                selModel.selectRow(recNum);
             });
 
             var buddiesStore = new Ext.data.JsonStore({
