@@ -346,7 +346,10 @@ class LaDaubeSession {
   int writeTrackImageToStream(def track, OutputStream os) {
     GridFS fs = new GridFS(db)
     GridFSFile file = fs.findOne(new BasicDBObject('uuid','img' + track.uuid))
-    return TransferStreams.transfer(file.getInputStream(), os)    
+    if (file) {
+      return TransferStreams.transfer(file.getInputStream(), os)
+    }
+    return 0
   }
   
 }

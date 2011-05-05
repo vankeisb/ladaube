@@ -14,9 +14,10 @@ public class TransferStreams {
 
         while ((len = in.read(buffer)) >= 0) {
             out.write(buffer, 0, len);
-            out.flush();
             totalRead += len;
         }
+
+        out.flush();
 
         return totalRead;
     }
