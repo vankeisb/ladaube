@@ -21,9 +21,15 @@
 
     <script type="text/javascript">
 
-        var audio;
+        var a;
         audiojs.events.ready(function() {
-          audio = audiojs.createAll();
+          a = audiojs.createAll({
+            trackEnded: function() {
+                if (window.player) {
+                    window.player.notifySongOver();
+                }
+            }
+          });
         });
 
 
@@ -31,7 +37,7 @@
         Ext.onReady(function() {
 
             var getPlayer = function() {
-                return audio[0];
+                return a[0];
             };
 
             var Player = Ext.extend(Ext.util.Observable, {
