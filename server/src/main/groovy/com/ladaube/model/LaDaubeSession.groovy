@@ -160,6 +160,20 @@ class LaDaubeSession {
     return res
   }
 
+  def getPlaylists(def user) {
+    if (!user) {
+      throw new IllegalArgumentException('user cannot be null')
+    }
+    def allUsers = []
+    allUsers << user.username
+    def buddies = getBuddies(user)
+    buddies.each { b ->
+      allUsers << b.username
+    }
+    def findCrit = [userId: [$in: allUsers]]
+    return db.playlists.find(findCrit)
+  }
+
   private boolean stringMatch(def track, String crit, String propName) {
     String val = track[propName]
     def critLc = crit.toLowerCase()
@@ -274,13 +288,6 @@ class LaDaubeSession {
     def p = [name:name, userId:user.username, tracks: new String[0]]
     db.playlists << p
     return p
-  }
-
-  def getPlaylists(def user) {
-    if (!user) {
-      throw new IllegalArgumentException('user cannot be null')
-    }
-    return db.playlists.find(userId: user.username)
   }
 
   void addTrackToPlaylist(def t, def playlist) {

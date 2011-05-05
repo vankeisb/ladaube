@@ -38,6 +38,8 @@
         Ext.BLANK_IMAGE_URL = 'js/ext-3.0.3/resources/images/default/s.gif';
         Ext.onReady(function() {
 
+            var username = "${actionBean.user.username}";
+
             var getPlayer = function() {
                 return a[0];
             };
@@ -307,7 +309,8 @@
                 url: '${pageContext.request.contextPath}/playlists?json=true',
                 fields: [
                     {name: 'id'},
-                    {name: 'name'}
+                    {name: 'name'},
+                    {name: 'userId'}
                 ]
             });
 
@@ -318,12 +321,16 @@
                 store: playlistsStore,
                 emptyText: 'You have no playlists',
                 reserveScrollOffset: true,
-                hideHeaders:true,
+                hideHeaders:false,
                 trackOver: true,
                 columns: [
                     {
                         header: 'name',
                         dataIndex: 'name'
+                    },
+                    {
+                        header: 'createdBy',
+                        dataIndex: 'userId'
                     }
                 ],
                 listeners: {
@@ -520,8 +527,12 @@
 
             playlistsGrid.on('contextmenu', function(dataView, rowIndex, node, e) {
                 e.stopEvent();
-                var coords = e.getXY();
-                contextMenuPlaylists.showAt([coords[0], coords[1]]);
+                var plUserId = playlistsStore.getAt(rowIndex).data.userId;
+                if (plUserId===username) {
+                    // only show menu for owned playlists
+                    var coords = e.getXY();
+                    contextMenuPlaylists.showAt([coords[0], coords[1]]);
+                }
             });
 
             var contextMenuTracks = new Ext.menu.Menu({

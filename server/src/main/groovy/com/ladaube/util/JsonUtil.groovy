@@ -74,6 +74,7 @@ public class JsonUtil {
     JSONObject o = new JSONObject()
     o.put('id', p._id)
     o.put('name', p.name)
+    o.put('userId', p.userId)
     return o
   }
 }
