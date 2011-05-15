@@ -95,13 +95,15 @@
                 },
 
                 updateTrackDetails: function(track) {
-                    Ext.fly('song-name').update(track.name, false);
-                    Ext.fly('album-name').update(track.album, false);
-                    Ext.fly('artist-name').update(track.artist, false);
+                    var songName = Ext.get('song-name');
+                    songName.update(track.name, false);
+                    var albumName = Ext.get('album-name');
+                    albumName.update(track.album, false);
+                    var artistName = Ext.get('artist-name');
+                    artistName.update(track.artist, false);
                     var url = "${pageContext.request.contextPath}/image/" + track.id;
-                    Ext.fly('track-image').dom.src = url;
-                    var songDetails = Ext.get('song-details');
-                    songDetails.show();
+                    var trackImage = Ext.get('track-image');
+                    trackImage.dom.src = url;
                 }
             });
             window.player = new Player({});
@@ -172,8 +174,6 @@
                     }                               
                 ]
             });
-
-            Ext.fly('song-details').hide();
 
             var myView = new Ext.ux.grid.livegrid.GridView({
                 nearLimit : 100,
@@ -621,13 +621,17 @@
 <div id="banner" class="x-hidden">
     <%@ include file="../logo.jsp"%>
     <div id="player">
-        <audio></audio>
+        <img id="track-image" src="${pageContext.request.contextPath}/images/unknown.jpg" alt="track image"/>
+        <div id="player-song-details">
+            <audio></audio>
+            <div id="song-details">
+                <span id="song-name"></span>
+                <span id="album-name"></span>
+                <span id="artist-name"></span>
+            </div>
+        </div>
     </div>
-    <div id="song-details" class="msg-div">
-        <img id="track-image" src="../../images/unknown.jpg" alt="track image"/>
-        <span id="song-name"></span><br/>
-        <span id="album-name"></span><br/>
-        <span id="artist-name"></span><br/>
+
     </div>
 </div>
 <div id="loginBox" class="x-hidden">

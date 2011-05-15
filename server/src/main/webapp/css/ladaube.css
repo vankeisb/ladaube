@@ -76,28 +76,30 @@ body {
 }
 
 #player {
-    position: absolute;
-    top: 10px;
-    left: 220px;
-}
-
-#song-details {
-    position: absolute;
-    left: 700px;
-    top: 10px;
-    width: 400px;
-    font-size: 8pt;
+    float: left;
+    margin-top: 4px;
+    margin-left: 20px;
 }
 
 #song-name {
     font-weight: bold;
 }
 
+#song-details {
+    font-size: 8pt;
+    width: 600px;
+    margin-left: 4px;
+}
+
 #track-image {
     float: left;
     height: 42px;
     width: 42px;
-    margin-right: 8px;
+    z-index: 100;
+}
+
+.spacer {
+    clear: both;
 }
 
 #logo {
@@ -107,6 +109,7 @@ body {
     padding-left: 50px;
     padding-top: 5px;
     background-position: 0 5px;
+    float: left;
 }
 
 #logoSlogan {    
@@ -120,6 +123,7 @@ body {
     height: 35px;
     background-image: url("../images/ladaube-neon.png");
     background-repeat: no-repeat;
+    width: 150px;
 }
 
 .tracks-loaded {
@@ -130,3 +134,58 @@ body {
     background-image: url(../images/playlists-icon.png);
 }
 
+.audiojs {
+    height: 22px;
+    background: #404040;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #444), color-stop(0.5, #555), color-stop(0.51, #444), color-stop(1, #444));
+    background-image: -moz-linear-gradient(center top, #444 0%, #555 50%, #444 51%, #444 100%);
+    -webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+    -o-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+}
+
+.audiojs .play-pause {
+    width: 15px;
+    height: 20px;
+    padding: 0px 8px 0px 0px;
+}
+
+.audiojs p {
+    width: 25px;
+    height: 20px;
+    margin: -3px 0px 0px -1px;
+}
+
+.audiojs .scrubber {
+    background: #5a5a5a;
+    width: 310px;
+    height: 10px;
+    margin: 5px;
+}
+
+.audiojs .progress {
+    height: 10px;
+    width: 0px;
+    background: #ccc;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #ccc), color-stop(0.5, #ddd), color-stop(0.51, #ccc), color-stop(1, #ccc));
+    background-image: -moz-linear-gradient(center top, #ccc 0%, #ddd 50%, #ccc 51%, #ccc 100%);
+}
+
+.audiojs .loaded {
+    height: 10px;
+    background: #000;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #222), color-stop(0.5, #333), color-stop(0.51, #222), color-stop(1, #222));
+    background-image: -moz-linear-gradient(center top, #222 0%, #333 50%, #222 51%, #222 100%);
+}
+
+.audiojs .time {
+    float: left;
+    height: 25px;
+    line-height: 25px;
+}
+
+.audiojs .error-message {
+    height: 24px;
+    line-height: 24px;
+}
