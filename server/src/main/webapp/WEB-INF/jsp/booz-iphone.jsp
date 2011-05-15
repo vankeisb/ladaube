@@ -30,14 +30,6 @@
         </c:forEach>
     </ul>
 
-    <ul id="artists" title="Sorted by Artist">
-        <c:forEach var="t" items="${actionBean.userTracksByAlbum}">
-            <li>
-                <ld:track track="${t}"/>
-            </li>
-        </c:forEach>
-    </ul>
-
     <div id="searchResults" class="panel" title="Search">
         <h2>Search results go here...</h2>
     </div>
