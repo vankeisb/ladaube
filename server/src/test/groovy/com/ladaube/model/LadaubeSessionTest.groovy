@@ -486,4 +486,28 @@ class LadaubeSessionTest extends GroovyTestCase {
     }
   }
 
+  void testChassJubilation() {
+    LaDaube.doInSession { LaDaubeSession s->
+      String fileName = System.getProperty('java.io.tmpdir') + File.separator + "/testmp3chass.mp3"
+      File f = new File(fileName)
+      try {
+        InputStream is = getClass().getResourceAsStream("/chass_jubilation.mp3")
+        f.withWriter { w->
+          is.withReader { r->
+            w << r
+          }
+        }
+        def trackData = s.extractTrackTagsFromFile(f, fileName)
+        assert trackData
+        assert trackData.name == "Jubilation"
+        assert trackData.album == "Jubilation"
+        assert trackData.artist == "François Chassagnite"
+      } finally {
+        f.delete()
+      }
+    }
+  }
+
+
+
 }

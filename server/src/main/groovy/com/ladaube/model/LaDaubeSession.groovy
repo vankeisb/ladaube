@@ -196,33 +196,10 @@ class LaDaubeSession {
     return byId(db.tracks, id)
   }
 
-  def createTrack(def user, InputStream data, String originalFileName) throws TrackAlreadyExistException {
-    if (user==null || data==null) {
-      throw new IllegalArgumentException("user and data can't be null")
-    }
-    // create track from MP3 input stream and assign user id
-    def t = [fileName: originalFileName, userId: user.username]
-
-    // transfer stream to file
-    String baseDir = System.getProperty('java.io.tmpdir')
-    String fileName = baseDir + File.separator + UUID.randomUUID().toString() + '.mp3'
-    File f = new File(fileName)                        
-    try {
-      FileOutputStream fos = new FileOutputStream(f)
-      t['contentLen'] = TransferStreams.transfer(data, fos)
-      fos.close()
-      data.close()
-
-      StringBuilder sb = new StringBuilder();
-
-      // MD5 verification
-      String md5 = MD5.get(f)
-      if (this.checkMD5(user, md5)) {
-        throw new TrackAlreadyExistException();
-      }
-      t['md5'] = md5
-
-      AbstractMP3Tag tag = getID3(f)
+  def extractTrackTagsFromFile(File trackFile, String originalFileName) {
+      def t = [:]
+      def sb = new StringBuilder()
+      AbstractMP3Tag tag = getID3(trackFile)
       if (tag==null) {
         throw new RuntimeException("can't get ID3 from file " + t.fileName)
       }
@@ -248,15 +225,43 @@ class LaDaubeSession {
         // not a valid int
       }
       t['genre'] = tag.getSongGenre()
-      sb.append(" ").append(t.genre)      
+      sb.append(" ").append(t.genre)
       String trackNumber = tag.getTrackNumberOnAlbum()
       try {
         t['trackNumber'] = trackNumber==null ? null : Integer.parseInt(trackNumber)
       } catch(NumberFormatException e) {
         // not a valid int
       }
-
       t['searchData'] = sb.toString()
+      return t
+  }
+
+  def createTrack(def user, InputStream data, String originalFileName) throws TrackAlreadyExistException {
+    if (user==null || data==null) {
+      throw new IllegalArgumentException("user and data can't be null")
+    }
+    // create track from MP3 input stream and assign user id
+    def t = [fileName: originalFileName, userId: user.username]
+
+    // transfer stream to file
+    String baseDir = System.getProperty('java.io.tmpdir')
+    String fileName = baseDir + File.separator + UUID.randomUUID().toString() + '.mp3'
+    File f = new File(fileName)                        
+    try {
+      FileOutputStream fos = new FileOutputStream(f)
+      t['contentLen'] = TransferStreams.transfer(data, fos)
+      fos.close()
+      data.close()
+
+      // MD5 verification
+      String md5 = MD5.get(f)
+      if (this.checkMD5(user, md5)) {
+        throw new TrackAlreadyExistException();
+      }
+      t['md5'] = md5
+
+      def tags = extractTrackTagsFromFile(f, originalFileName)
+      t.putAll(tags)
 
       t['postedOn'] = new Date()
 
