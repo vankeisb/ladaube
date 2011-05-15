@@ -12,7 +12,7 @@ public class TransferStreams {
         int len;
         int totalRead = 0;
 
-        while ((len = in.read(buffer)) >= 0) {
+        while ((len = in.read(buffer)) > 0) {
             out.write(buffer, 0, len);
             totalRead += len;
         }
