@@ -360,8 +360,9 @@ class LaDaubeSession {
     GridFSFile file = fs.findOne(new BasicDBObject('uuid','img' + track.uuid))
     if (file) {
       return TransferStreams.transfer(file.getInputStream(), os)
+    } else {
+      return TransferStreams.transfer(getClass().getResourceAsStream('/unknown.jpg'), os)
     }
-    return 0
   }
   
 }
