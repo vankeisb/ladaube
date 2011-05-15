@@ -13,11 +13,21 @@ import net.sourceforge.stripes.action.RedirectResolution
 import com.ladaube.model.LaDaubeSession
 import org.apache.log4j.Logger
 import com.ladaube.util.auth.LoginActionBean
+import javax.servlet.http.HttpServletRequest
+import com.ladaube.util.IphoneUtil
 
 @UrlBinding('/login')
 public class LaDaubeLogin extends LoginActionBean {
 
   private static final Logger logger = Logger.getLogger(LaDaubeLogin.class)
+
+  @Override
+  protected String getJspPath() {
+    if (IphoneUtil.isIphone(context.request)) {
+      return '/WEB-INF/auth/login-iphone.jsp'
+    }
+    return super.getJspPath()
+  }
 
   protected def authenticate() {
     def ip = getContext().getRequest().getRemoteAddr()

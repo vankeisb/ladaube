@@ -8,19 +8,14 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.Cookie
 import com.ladaube.model.LaDaube
 import com.ladaube.model.LaDaubeSession
+import com.ladaube.util.IphoneUtil
 
 @UrlBinding('/booz')
 @RequiresAuthentication
 public class Booz extends BaseAction {
 
   Resolution display() {
-    HttpServletRequest r = getContext().getRequest();
-    String userAgent = r.getHeader( "User-Agent" );
-    boolean isIphone = userAgent != null && userAgent.indexOf("iPhone") != -1;
-    if (!isIphone) {
-      isIphone = r.getParameter("iphone") != null
-    }
-    if (isIphone) {
+    if (IphoneUtil.isIphone(context.request)) {
       return new ForwardResolution('/WEB-INF/jsp/booz-iphone.jsp')
     }
     return new ForwardResolution('/WEB-INF/jsp/booz.jsp')

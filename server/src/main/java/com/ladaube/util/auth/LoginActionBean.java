@@ -56,11 +56,15 @@ public abstract class LoginActionBean<U> implements ActionBean, AuthConstants {
         this.targetUrl = targetUrl;
     }
 
+    protected String getJspPath() {
+      return "/WEB-INF/auth/login.jsp";
+    }
+
     @DefaultHandler
     @DontValidate
     public Resolution displayForm() {
         log.debug("Displaying login form");
-        return new ForwardResolution("/WEB-INF/auth/login.jsp");
+        return new ForwardResolution(getJspPath());
     }
 
     public Resolution login() {
