@@ -7,40 +7,35 @@
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/xtheme-gray.css"/>
     <link rel="stylesheet" type="text/css" href="css/ladaube.css"/>
-    <script type="text/javascript" src="js/ext-3.0.3/adapter/ext/ext-base.js"></script>
-    <script type="text/javascript" src="js/ext-3.0.3/ext-all-debug.js"></script>
-    <script type="text/javascript" src="js/ext-3.0.3/examples.js"></script>
-
-    <script type="text/javascript">
-
-        Ext.BLANK_IMAGE_URL = 'js/ext-3.0.3/resources/images/default/s.gif';
-        Ext.onReady(function() {
-
-            var loginPanel = new Ext.Panel({
-                title: 'Authentication required',
-                contentEl: 'loginPanelContent',
-                renderTo: 'loginPanel',
-                width: '250px',                
-                frame: true
-            });
-            
-        });
-    </script>
     <style type="text/css">
         body {
             padding: 0;
             margin: 0;
         }
 
-        .x-panel-body td {
+        td {
             font-family: tahoma,arial,verdana,sans-serif;
             font-size: 8pt;
             padding-bottom: 4px;
             padding-right: 4px;
         }
 
+        .centerContainer {
+          text-align: center;
+        }
+
         #loginPanel {
-            margin-left: 40px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 400px;
+        }
+
+        #loginPanel table {
+            padding-top: 4px;
+            padding-bottom: 4px;
+            padding-left: 20px;
+            padding-right: 20px;
+            background-color: #d3d3d3;
         }
     </style>
 </head>
@@ -48,39 +43,45 @@
 <div id="banner">
     <%@ include file="../logo.jsp"%>
 </div>
+<div class="spacer"></div>
 <s:messages/>
 <s:errors/>
-<s:form beanclass="<%=LaDaubeLogin.class.getName()%>">
-    <s:hidden name="targetUrl"/>
-    <div id="loginPanel" class="x-panel-body"></div>
-    <div id="loginPanelContent" class="x-hidden">
-        <table style="width: 100%;">
-            <tbody>
-            <tr>
-                <td>
-                    username
-                </td>
-                <td>
-                    <s:text class="x-form-text x-form-field" name="username"/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    password
-                </td>
-                <td>
-                    <s:password class="x-form-text x-form-field" name="password"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" align="right">
-                    <s:submit name="login" value="Log-in"/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+<div class="centerContainer">
+    <div id="loginPanel">
+    <s:form beanclass="<%=LaDaubeLogin.class.getName()%>">
+        <s:hidden name="targetUrl"/>
+            <table>
+                <tbody>
+                <tr>
+                    <td colspan="2" align="left">
+                        <h1>Please log in</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        username
+                    </td>
+                    <td>
+                        <s:text class="x-form-text x-form-field" name="username"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        password
+                    </td>
+                    <td>
+                        <s:password class="x-form-text x-form-field" name="password"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="right">
+                        <s:submit name="login" value="Log-in"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </s:form>
     </div>
-</s:form>
-
+</div>
 </body>
 </html>
