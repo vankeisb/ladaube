@@ -67,7 +67,7 @@ class ImageResolution extends StreamingResolution {
   def ImageResolution(def t) {
     super('image/jpeg')
     this.t = t
-    setFilename('trackImage.mp3')
+    setFilename("${t._id}.jpg")
   }
 
   void stream(HttpServletResponse response) throws Exception {

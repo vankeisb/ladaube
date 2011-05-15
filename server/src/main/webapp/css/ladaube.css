@@ -86,9 +86,13 @@ body {
 }
 
 #song-details {
-    font-size: 8pt;
-    width: 600px;
-    margin-left: 4px;
+  font-size: 8pt;
+  margin-left: 4px;
+  padding-bottom: 4px;
+  padding-right: 4px;
+  padding-top: 4px;
+  padding-left: 42px;
+  width: 600px;
 }
 
 #track-image {
@@ -96,6 +100,7 @@ body {
     height: 42px;
     width: 42px;
     z-index: 100;
+    margin-right:4px;
 }
 
 .spacer {
