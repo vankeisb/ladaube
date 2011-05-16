@@ -501,9 +501,49 @@ class LadaubeSessionTest extends GroovyTestCase {
         assert trackData
         assert trackData.name == "Jubilation"
         assert trackData.album == "Jubilation"
-        assert trackData.artist == "François Chassagnite"
+        assert trackData.artist == "Fran\u00e7ois Chassagnite"
       } finally {
         f.delete()
+      }
+    }
+  }
+
+  void testMp3Tags() {
+    LaDaube.doInSession { LaDaubeSession s ->
+
+      ["Believe It",
+        "Personal Possessions",
+        "Someone New",
+        "lolo",
+        "chass_jubilation"].each { name ->
+
+        println "Testing $name"
+        def mp3Path = "/${name}.mp3"
+        def propsPath = "/${name}.properties"
+        String fileName = System.getProperty('java.io.tmpdir') + File.separator + "/${name}.mp3"
+        File f = new File(fileName)
+        try {
+          InputStream is = getClass().getResourceAsStream(mp3Path)
+          f.withWriter { w->
+            is.withReader { r->
+              w << r
+            }
+          }
+          def trackData = s.extractTrackTagsFromFile(f, fileName)
+          println "actual data : $trackData"
+          def expectedProps = new Properties()
+          def input = getClass().getResourceAsStream(propsPath);
+          assertNotNull("could not find property file " + propsPath, input)
+          expectedProps.load(new InputStreamReader(input))
+          println "expected data  : $expectedProps"
+          for (def expectedKey : expectedProps.keySet()) {
+            def expectedVal = expectedProps.get(expectedKey);
+            def actualVal = trackData[expectedKey]
+            assertEquals("property is null or different for key $expectedKey : expexted $expectedVal, found $actualVal", expectedVal, actualVal)
+          }
+        } finally {
+          f.delete()
+        }
       }
     }
   }
