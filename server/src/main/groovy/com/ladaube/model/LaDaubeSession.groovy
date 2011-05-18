@@ -377,5 +377,29 @@ class LaDaubeSession {
       return TransferStreams.transfer(getClass().getResourceAsStream('/unknown.jpg'), os)
     }
   }
-  
+
+  def getTrackForUser(def track, def user) {
+    if (track instanceof String) {
+      track = getTrack(track)
+    }
+    if (!track) {
+      return null
+    }
+    if (user instanceof String) {
+      user = getUser(user)
+    }
+    if (!user) {
+      return null
+    }
+    if (track.userId==user.username.toString()) {
+      return track
+    }
+    def buddies = getBuddies(user)
+    for (def b : buddies) {
+      if (track.userId==b.username) {
+        return track
+      }
+    }
+    return null
+  }
 }

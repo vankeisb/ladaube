@@ -33,12 +33,14 @@ class StreamTrack extends BaseAction {
     if (u==null) {
       throw new IllegalStateException("Unable to find a user for session")
     }
-    return LaDaube.doInSession { s->
-      def t =s.getTrack(track)
+    return LaDaube.doInSession { LaDaubeSession s->
+      def t =s.getTrackForUser(track, user)
       if (t) {
         s.db.stats_downloads << [userId: u._id, date: new Date(), trackId: t._id]
         logger.debug("Streaming track $t._id")
         return new TrackResolution(t)
+      } else {
+        logger.warn("unable to get track $track for user ${u.username}")
       }
       return null
     }

@@ -360,6 +360,10 @@ class LadaubeSessionTest extends GroovyTestCase {
       s.createTrack(alex, is, 'Believe It')
 
       s.makeBuddies(remi, alex)
+
+      def foobar = s.createUser("foobar", "foobar");
+      is = getClass().getResourceAsStream('/lolo.mp3')
+      s.createTrack(foobar, is, 'lolo')
     }
   }
 
@@ -545,6 +549,24 @@ class LadaubeSessionTest extends GroovyTestCase {
           f.delete()
         }
       }
+    }
+  }
+
+  void testGetTrackForUser() {
+    createTracksAndUsers()
+    LaDaube.doInSession { LaDaubeSession s ->
+      def remi = s.getUser("remi")
+      def remiTrack = s.getUserTracks(remi, false, null).iterator().next()
+      assertNotNull("track not found for remi with objects", s.getTrackForUser(remiTrack, remi))
+      assertNotNull("track not found for remi with string, object", s.getTrackForUser(remiTrack._id.toString(), remi))
+      assertNotNull("track not found for remi with object, string", s.getTrackForUser(remiTrack, "remi"))
+      assertNotNull("track not found for remi with string, string", s.getTrackForUser(remiTrack._id.toString(), "remi"))
+
+      def foobar = s.getUser("foobar")
+      assertNull("track found for foobar", s.getTrackForUser(remiTrack, foobar))
+
+      def alex = s.getUser("alex")
+      assertNotNull("frack not found for alex (he's a buddy)", s.getTrackForUser(remiTrack, "alex"))
     }
   }
 

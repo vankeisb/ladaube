@@ -77,4 +77,11 @@ public class JsonUtil {
     o.put('userId', p.userId)
     return o
   }
+
+  JSONObject jsonError(String message) {
+    JSONObject result = new JSONObject()
+    result.put("error", true)
+    result.put("message", message)
+    return result
+  }
 }
