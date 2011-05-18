@@ -78,8 +78,8 @@ public abstract class LoginActionBean<U> implements ActionBean, AuthConstants {
             if (targetUrl==null) {
                 targetUrl = DEFAULT_TARGET_URL;
             }
-            log.debug(username, " logged in, redirecting to ", targetUrl);
-            return new RedirectResolution(targetUrl);
+            log.debug(username, " logged in, redirecting to home");
+            return new ForwardResolution("/WEB-INF/index-redirect.jsp");
         } else {
             // authentication failed, add messages to context, and redirect to login
             log.warn("Authentication failed for user '", username, "', redirecting to login form again");

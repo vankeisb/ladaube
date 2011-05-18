@@ -38,10 +38,6 @@ public class AuthenticationInterceptor implements Interceptor, AuthConstants {
                 if (requestedPage.startsWith(contextPath)) {
                     requestedPage = requestedPage.substring(contextPath.length());
                 }
-                String queryString = request.getQueryString();
-                if (queryString!=null) {
-                    requestedPage += queryString;
-                }
                 return new ForwardResolution(loginUrl).addParameter(REQ_PARAM_TARGET_URL, requestedPage);
             }
         }
