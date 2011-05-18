@@ -1,19 +1,19 @@
 package com.ladaube.model
 
-import org.farng.mp3.MP3File
-import org.farng.mp3.TagException
-import org.farng.mp3.AbstractMP3Tag
-import com.ladaube.util.TransferStreams
-import org.farng.mp3.id3.AbstractID3v2
-import com.ladaube.util.MD5
-import org.apache.log4j.Logger
 import com.gmongo.GMongo
-
+import com.ladaube.util.MD5
+import com.ladaube.util.TransferStreams
 import com.mongodb.BasicDBObject
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSFile
 import java.util.regex.Pattern
+import org.apache.log4j.Logger
 import org.bson.types.ObjectId
+import org.jaudiotagger.audio.AudioFile
+import org.jaudiotagger.audio.AudioFileIO
+import org.jaudiotagger.tag.FieldKey
+import org.jaudiotagger.tag.Tag
+import org.jaudiotagger.tag.TagField
 
 class LaDaubeSession {
 
@@ -196,37 +196,59 @@ class LaDaubeSession {
     return byId(db.tracks, id)
   }
 
+  private String convertFields(Tag tag, FieldKey k) {
+    return tag.getFirst(k)
+//    def items = tag.getFields(k);
+//    if (items==null) {
+//      return null
+//    }
+//    StringBuilder sb = new StringBuilder()
+//    for (Iterator<TagField> it = items.iterator() ; it.hasNext() ; ) {
+//      TagField tf = it.next();
+//      tf.get
+//      if (tf!=null) {
+//        sb.append(tf.toString())
+//      }
+//      if (it.hasNext()) {
+//        sb.append(" ")
+//      }
+//    }
+//    return sb
+  }
+
   def extractTrackTagsFromFile(File trackFile, String originalFileName) {
       def t = [:]
       def sb = new StringBuilder()
-      AbstractMP3Tag tag = getID3(trackFile)
+
+      Tag tag = null
+      AudioFile f = AudioFileIO.read(trackFile);
+      if (f!=null) {
+        tag = f.getTag()
+      }
       if (tag==null) {
         throw new RuntimeException("can't get ID3 from file " + t.fileName)
       }
-      t['name'] = tag.getSongTitle()
+      t['name'] = convertFields(tag, FieldKey.TITLE)
       if (!t['name']) {
         t['name'] = originalFileName
       }
       sb.append(t.name)
-      t['artist'] = tag.getLeadArtist()
+      t['artist'] = convertFields(tag, FieldKey.ARTIST)
       sb.append(" ").append(t.artist)
-      t['albumArtist'] = null // TODO
+      t['albumArtist'] = convertFields(tag, FieldKey.ALBUM_ARTIST)
       sb.append(" ").append(t.albumArtist)
-      t['album'] = tag.getAlbumTitle()
+      t['album'] = convertFields(tag, FieldKey.ALBUM)
       sb.append(" ").append(t.album)
-      if (tag instanceof AbstractID3v2) {
-        t['composer'] = tag.getAuthorComposer()
-      }
-      String year = tag.getYearReleased()
+      String year = convertFields(tag, FieldKey.YEAR)
       try {
         t['year'] = year==null ? null : Integer.parseInt(year)
         sb.append(" ").append(Integer.toString(t.year))
       } catch(NumberFormatException e) {
         // not a valid int
       }
-      t['genre'] = tag.getSongGenre()
+      t['genre'] = convertFields(tag, FieldKey.GENRE)
       sb.append(" ").append(t.genre)
-      String trackNumber = tag.getTrackNumberOnAlbum()
+      String trackNumber = convertFields(tag, FieldKey.TRACK)
       try {
         t['trackNumber'] = trackNumber==null ? null : Integer.parseInt(trackNumber)
       } catch(NumberFormatException e) {
@@ -331,15 +353,6 @@ class LaDaubeSession {
     GridFSFile fsFile = fs.createFile(data)
     fsFile.put('uuid', 'img' + track.uuid)
     fsFile.save()
-  }
-
-  static AbstractMP3Tag getID3(File f) throws IOException, TagException {
-      MP3File mp3 = new MP3File(f)
-      if (mp3.hasID3v1Tag() || mp3.hasID3v2Tag()) {
-          return mp3.hasID3v2Tag() ? mp3.getID3v2Tag() : mp3.getID3v1Tag()
-      } else {
-          return null;
-      }
   }
 
   void clearCollections() {
