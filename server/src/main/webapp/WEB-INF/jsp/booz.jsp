@@ -6,8 +6,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title id="page-title">LaDaube</title>
 
-    <script src="${pageContext.request.contextPath}/js/audiojs/audiojs/audio.js"></script>
-
     <!--  ext JS 3.0 -->
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/xtheme-gray.css"/>
@@ -19,19 +17,7 @@
     <link rel="stylesheet" type="text/css" href="js/livegrid/resources/css/ext-ux-livegrid.css" />
     <script type="text/javascript" src="js/livegrid/livegrid-all-debug.js"></script>
 
-    <script type="text/javascript">
-
-        audiojs.events.ready(function() {
-            a = audiojs.createAll({
-                trackEnded: function() {
-                    if (window.player) {
-                        window.player.notifySongOver();
-                    }
-                }
-            });
-        });
-
-    </script>
+    <script src="${pageContext.request.contextPath}/js/audiojs/audiojs/audio.js"></script>
 
     <script type="text/javascript">
 
@@ -41,7 +27,7 @@
             var username = "${actionBean.user.username}";
 
             var getPlayer = function() {
-                return a[0];
+                return window.a[0];
             };
 
             var Player = Ext.extend(Ext.util.Observable, {
@@ -69,6 +55,9 @@
                     var url = 'stream/' + trackId;
 
                     // play track
+                    if (!audioReady) {
+                        throw {message:"Player isn't ready"};
+                    }
                     getPlayer().load(url);
                     getPlayer().play();
                     this.fireEvent('songStarted', plItem);
@@ -84,6 +73,7 @@
                         success: function(response) {
                             var data = Ext.util.JSON.decode(response.responseText);
                             this.updateTrackDetails(data);
+                            window.location.hash = trackId;
                         },
                         scope: this
                     });
@@ -466,16 +456,13 @@
                 mode = 0;
             };
 
-            buddiesStore.load();
-            playlistsStore.load();
-            displayAllTracks();
 
-        /****
-        * Setup Drop Targets
-        ***/
+            /****
+            * Setup Drop Targets
+            ***/
 
-        // This will make sure we only drop to the view scroller element
-        var dropTarget = new Ext.dd.DropTarget(playlistsGrid.el.dom, {
+            // This will make sure we only drop to the view scroller element
+            var dropTarget = new Ext.dd.DropTarget(playlistsGrid.el.dom, {
                 ddGroup    : 'gridDDGroup',
                 notifyDrop : function(ddSource, e, data){
                     var selectedRecords = ddSource.dragData.selections;
@@ -496,7 +483,7 @@
                         }
                     });
                 }
-         });
+            });
 
 
             /* context menu */
@@ -581,9 +568,38 @@
                     }
                 }
             });
-            
+
+            buddiesStore.load();
+            playlistsStore.load();
+
+            var trackId = window.location.hash;
+            if (trackId) {
+                setTimeout(function() {
+                    var id = trackId.substring(1, trackId.length);
+                    window.player.play([{id:id}]);
+                }, 2000);
+            }
+
+            displayAllTracks();
         });
     </script>
+
+    <script type="text/javascript">
+
+        audiojs.events.ready(function() {
+            a = audiojs.createAll({
+                trackEnded: function() {
+                    if (window.player) {
+                        window.player.notifySongOver();
+                    }
+                }
+            });
+
+            audioReady = true;
+        });
+
+    </script>
+
 </head>
 <body>
 
@@ -623,7 +639,7 @@
     <div id="player">
         <img id="track-image" src="${pageContext.request.contextPath}/images/unknown.jpg" alt="track image"/>
         <div id="player-song-details">
-            <audio></audio>
+            <audio preload="none"></audio>
             <div id="song-details">
                 <span id="song-name"></span>
                 <span id="album-name"></span>
