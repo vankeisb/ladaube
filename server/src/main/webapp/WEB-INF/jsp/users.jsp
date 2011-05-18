@@ -16,12 +16,12 @@
             </tr>
             <c:forEach var="u" items="${actionBean.users}">
                 <tr>
-                    <td>${u.id}</td>
+                    <td>${u.username}</td>
                     <td>${u.email}</td>
                     <td>
                         <ul>
                             <c:forEach var="b" items="${actionBean.usersMap[u]}">
-                                <li>${b.id}</li>
+                                <li>${b.username}</li>
                             </c:forEach>
                         </ul>
                     </td>
