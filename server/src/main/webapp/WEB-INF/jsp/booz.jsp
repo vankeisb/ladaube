@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title id="page-title">LaDaube</title>
 
-    <script src="${pageContext.request.contextPath}/js/audiojs/audiojs/audio.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/audiojs/audiojs/audio.js"></script>
 
     <!--  ext JS 3.0 -->
     <link rel="stylesheet" type="text/css" href="js/ext-3.0.3/resources/css/ext-all.css"/>
