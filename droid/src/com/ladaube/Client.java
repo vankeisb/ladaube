@@ -16,7 +16,7 @@ public class Client {
         reinit();
     }
 
-    private String baseUrl = "http://9.128.98.31:8080/ladaube";
+    private String baseUrl = "http://9.128.98.14/ladaube";
 
     public String getBaseUrl() {
         return baseUrl;
@@ -30,7 +30,7 @@ public class Client {
         httpClient = new HttpClient(baseUrl);
         try {
             // authenticate the user
-            JSONObject resp = httpClient.jsonGet("/login?login=true&json=true&username=remi&password=remi");
+            JSONObject resp = httpClient.jsonGet("/login?login=true&json=true&username=jay-d&password=jay-d");
             // TODO check response
 
             // pre-load playlists and tracks list (TO BE OPTIMIZED)
