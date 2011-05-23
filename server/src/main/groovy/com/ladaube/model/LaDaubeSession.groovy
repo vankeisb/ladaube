@@ -2,7 +2,6 @@ package com.ladaube.model
 
 import com.gmongo.GMongo
 import com.ladaube.util.MD5
-import com.ladaube.util.TransferStreams
 import com.mongodb.BasicDBObject
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSFile
@@ -13,7 +12,7 @@ import org.jaudiotagger.audio.AudioFile
 import org.jaudiotagger.audio.AudioFileIO
 import org.jaudiotagger.tag.FieldKey
 import org.jaudiotagger.tag.Tag
-import org.jaudiotagger.tag.TagField
+import com.ladaube.util.TransferStreams
 
 class LaDaubeSession {
 
@@ -362,10 +361,10 @@ class LaDaubeSession {
     db.playlists.remove([:])
   }
 
-  int writeTrackDataToStream(def track, OutputStream os) {
+  def getTrackInfos(def track) {
     GridFS fs = new GridFS(db)
     GridFSFile file = fs.findOne(new BasicDBObject('uuid',track.uuid))
-    return TransferStreams.transfer(file.getInputStream(), os)
+    return ["is": file.getInputStream(), "len": file.length]
   }
 
   int writeTrackImageToStream(def track, OutputStream os) {
