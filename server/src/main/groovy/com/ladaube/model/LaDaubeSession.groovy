@@ -361,6 +361,11 @@ class LaDaubeSession {
     db.playlists.remove([:])
   }
 
+  int writeTrackDataToStream(def track, OutputStream os) {
+    def ti = getTrackInfos(track)
+    return TransferStreams.transfer(ti.is, os)
+  }
+
   def getTrackInfos(def track) {
     GridFS fs = new GridFS(db)
     GridFSFile file = fs.findOne(new BasicDBObject('uuid',track.uuid))
