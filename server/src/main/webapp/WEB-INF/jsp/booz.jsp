@@ -243,7 +243,7 @@
                 ]                
             });
 
-            tracksGrid.on('rowclick', function(grid, index, e) {
+            tracksGrid.on('rowdblclick', function(grid, index, e) {
                 // build playlist (list of track Ids)
                 var playlist = [];
                 var recNum = store.bufferRange[0];
