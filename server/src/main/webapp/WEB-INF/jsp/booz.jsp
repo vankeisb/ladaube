@@ -697,7 +697,7 @@
                 }, 2000);
             }
 
-            displayAllAlbums();
+            displayAllTracks();
         });
     </script>
 
