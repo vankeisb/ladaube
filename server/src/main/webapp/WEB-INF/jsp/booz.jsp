@@ -140,7 +140,10 @@
                 }
             });
 
-            var doFilter = function() {
+            var doFilter = function(searchCrit) {
+                if (searchCrit) {
+                    searchField.setValue(searchCrit);
+                }
                 var crit = searchField.getValue();
                 if (crit) {
                     store.setBaseParam('query', crit);
@@ -226,7 +229,6 @@
                                 searchField.setValue(null);
                                 searchField.focus();
                                 doFilter();
-                                store.load();
                             }
                         }
                     }
@@ -278,8 +280,11 @@
                         // set mode to buddy
                         mode = 2;
                         var buddyId = buddiesStore.getAt(index).data.id;
+                        displayAllTracks(true);
+                        searchField.setValue(null);
                         store.setBaseParam('playlistId', null);
                         store.setBaseParam('buddyId', buddyId);
+                        store.setBaseParam('query', null);
                         store.load();
                     }
                 }
@@ -316,6 +321,8 @@
                 listeners: {
                     click: function(dataView, index) {
                         var playlistId = playlistsStore.getAt(index).data.id;
+                        searchField.setValue(null);
+                        displayAllTracks(true);
                         store.setBaseParam('playlistId', playlistId);
                         store.setBaseParam('buddyId', null);
                         store.load();
@@ -482,7 +489,16 @@
                         header: 'artist',
                         dataIndex: 'artist'
                     }
-                ]
+                ],
+                listeners: {
+                    click: function(dataView, index) {
+                        var albumName = albumsStore.getAt(index).data.name;
+                        // fill search crit and filter
+                        displayAllTracks(true);
+                        doFilter(albumName);
+                        mode = 0;
+                    }
+                }
             });
             centerContainer.add(albumsGrid);
             albumsGrid.hide();
@@ -506,7 +522,17 @@
                         header: 'name',
                         dataIndex: 'name'
                     }
-                ]
+                ],
+                listeners: {
+                    click: function(dataView, index) {
+                        var artistName = artistsStore.getAt(index).data.name;
+                        // fill search crit and filter
+                        displayAllTracks(true);
+                        doFilter(artistName);
+                        mode = 0;
+                    }
+                }
+
             });
             centerContainer.add(artistsGrid);
             artistsGrid.hide();
@@ -533,14 +559,17 @@
                 mode = 0;
             };
 
-            var displayAllTracks = function() {
+            var displayAllTracks = function(skipLoad) {
                 albumsGrid.hide();
                 artistsGrid.hide();
                 centerContainer.setTitle("Tracks");
                 tracksGrid.show();
-                store.setBaseParam('playlistId', null);
-                store.setBaseParam('buddyId', null);
-                store.load();
+                centerContainer.doLayout(true, true);
+                if (!skipLoad) {
+                    store.setBaseParam('playlistId', null);
+                    store.setBaseParam('buddyId', null);
+                    store.load();
+                }
                 // set mode to "library"
                 mode = 0;
             };
