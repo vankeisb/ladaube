@@ -31,21 +31,19 @@ class Artists extends BaseAction {
       return u.resolution(u.tracksToJson(tracks, false).toString())
     } else {
       // grab artists as json (naive implem)
-      JSONObject result = new JSONObject()
-      JSONArray jsonAlbums = new JSONArray()
-      result.put("artists", jsonAlbums)
+      JSONArray jsonArtists = new JSONArray()
       def allArtistsNames = []
       LaDaube.doInSession { LaDaubeSession session ->
         session.getUserTracks(getUser(), true, null).each { t ->
           if (!allArtistsNames.contains(t.artist)) {
             allArtistsNames << t.artist
-            JSONObject jsonAlbum = new JSONObject()
-            jsonAlbum.put("name", t.artist)
-            jsonAlbums.put(jsonAlbum)
+            JSONObject jsonArtist = new JSONObject()
+            jsonArtist.put("name", t.artist)
+            jsonArtists.put(jsonArtist)
           }
         }
       }
-      return new StreamingResolution("text/json", result.toString())
+      return new StreamingResolution("text/json", jsonArtists.toString())
     }
   }
 }

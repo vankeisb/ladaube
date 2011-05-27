@@ -31,9 +31,7 @@ class Albums extends BaseAction {
       return u.resolution(u.tracksToJson(tracks, false).toString())
     } else {
       // grab albums as json (naive implem)
-      JSONObject result = new JSONObject()
       JSONArray jsonAlbums = new JSONArray()
-      result.put("albums", jsonAlbums)
       def allAlbumNames = []
       LaDaube.doInSession { LaDaubeSession session ->
         session.getUserTracks(getUser(), true, null).each { t ->
@@ -46,7 +44,7 @@ class Albums extends BaseAction {
           }
         }
       }
-      return new StreamingResolution("text/json", result.toString())
+      return new StreamingResolution("text/json", jsonAlbums.toString())
     }
   }
 

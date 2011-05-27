@@ -197,7 +197,6 @@
                 loadMask       : {
                     msg : 'Loading tracks...'
                 },
-                title          : 'Tracks',
                 store    : store,
                 selModel : new Ext.ux.grid.livegrid.RowSelectionModel(),
                 view     : myView,
@@ -231,21 +230,7 @@
                             }
                         }
                     }
-                ],
-                tools: [
-                    {
-                        id: 'search',
-                        qtip: 'Filter tracks',
-                        handler: function(event, toolEl, panel) {
-                            var tbar = panel.getTopToolbar();
-                            if (tbar.isVisible()) {
-                                tbar.hide();
-                            } else {
-                                tbar.show();
-                            }
-                        }
-                    }
-                ]                
+                ]
             });
 
             tracksGrid.on('rowdblclick', function(grid, index, e) {
@@ -310,7 +295,7 @@
             });
 
             var selectedPlaylistIndex = -1;
-            var mode = 0; // 0==library, 1==playlist, 2==buddy (needed for popup on tracks grid)
+            var mode = 0; // 0==library, 1==playlist, 2==buddy (needed for popup on tracks grid), 3==albums, 4==artists
 
             var playlistsGrid = new Ext.ListView({
                 store: playlistsStore,
@@ -341,6 +326,14 @@
                         selectedPlaylistIndex = index;
                     }
                 }
+            });
+
+            var centerContainer = new Ext.Panel({
+                id: 'centerContainer',
+                region: 'center',
+                items: tracksGrid,
+                layout: 'fit',
+                title: "Tracks"
             });
 
             var mainPanel = new Ext.Panel({
@@ -429,7 +422,7 @@
                                     }
                                 ]
                             },
-                            tracksGrid
+                            centerContainer
                         ]
                     }
                 ]
@@ -441,26 +434,116 @@
                 renderTo: document.body
             });
 
-            // register listener for styling the "library" item
+            // register listeners & style for main menu
+            var albumsEm = Ext.get('albums');
+            var artistsEm = Ext.get('artists');
             var libraryEm = Ext.get('library');
-            libraryEm.on('mouseover', function() {
-                libraryEm.addClass('x-list-over');
-            });
-            libraryEm.on('mouseout', function() {
-                libraryEm.removeClass('x-list-over');
-            });
+            var ems = [albumsEm, artistsEm, libraryEm];
+            for (var i=0 ; i<ems.length ; i++) {
+                ems[i].on('mouseover', function() {
+                    this.addClass('x-list-over');
+                });
+                ems[i].on('mouseout', function() {
+                    this.removeClass('x-list-over');
+                });
+            }
+
             libraryEm.on('click', function() {
                 displayAllTracks();
             }, this);
+            artistsEm.on('click', function() {
+                displayAllArtists();
+            }, this);
+            albumsEm.on('click', function() {
+                displayAllAlbums();
+            }, this);
+
+            var albumsStore = new Ext.data.JsonStore({
+                url: '${pageContext.request.contextPath}/albums',
+                fields: [
+                    {name: 'name'},
+                    {name: 'artist'}
+                ]
+            });
+
+            var albumsGrid = new Ext.ListView({
+                id: 'albumsGrid',
+                store: albumsStore,
+                emptyText: 'No albums found',
+                reserveScrollOffset: true,
+                hideHeaders:false,
+                trackOver: true,
+                columns: [
+                    {
+                        header: 'name',
+                        dataIndex: 'name'
+                    },
+                    {
+                        header: 'artist',
+                        dataIndex: 'artist'
+                    }
+                ]
+            });
+            centerContainer.add(albumsGrid);
+            albumsGrid.hide();
+
+            var artistsStore = new Ext.data.JsonStore({
+                url: '${pageContext.request.contextPath}/artists',
+                fields: [
+                    {name: 'name'}
+                ]
+            });
+
+            var artistsGrid = new Ext.ListView({
+                id: 'artistsGrid',
+                store: artistsStore,
+                emptyText: 'No artists found',
+                reserveScrollOffset: true,
+                hideHeaders:false,
+                trackOver: true,
+                columns: [
+                    {
+                        header: 'name',
+                        dataIndex: 'name'
+                    }
+                ]
+            });
+            centerContainer.add(artistsGrid);
+            artistsGrid.hide();
+
+            var displayAllAlbums = function() {
+                tracksGrid.hide();
+                artistsGrid.hide();
+                centerContainer.setTitle("Albums");
+                albumsGrid.show();
+                centerContainer.doLayout(true, true);
+                albumsStore.load();
+                // set mode to "albums"
+                mode = 3;
+            };
+
+            var displayAllArtists = function() {
+                tracksGrid.hide();
+                albumsGrid.hide();
+                centerContainer.setTitle("Artists");
+                artistsGrid.show();
+                centerContainer.doLayout(true, true);
+                artistsStore.load();
+                // set mode to "artists"
+                mode = 0;
+            };
 
             var displayAllTracks = function() {
+                albumsGrid.hide();
+                artistsGrid.hide();
+                centerContainer.setTitle("Tracks");
+                tracksGrid.show();
                 store.setBaseParam('playlistId', null);
                 store.setBaseParam('buddyId', null);
                 store.load();
                 // set mode to "library"
                 mode = 0;
             };
-
 
             /****
             * Setup Drop Targets
@@ -585,7 +668,7 @@
                 }, 2000);
             }
 
-            displayAllTracks();
+            displayAllAlbums();
         });
     </script>
 
@@ -613,7 +696,9 @@
         <div class="x-list-body">
             <div class="x-list-body-inner">
                 <dl class=" ">
-                    <dt style="width: 100%; text-align: left;"><em id="library" unselectable="on">Library</em></dt>
+                    <dt style="width: 100%; text-align: left;"><em id="library" unselectable="on">Tracks</em></dt>
+                    <dt style="width: 100%; text-align: left;"><em id="albums" unselectable="on">Albums</em></dt>
+                    <dt style="width: 100%; text-align: left;"><em id="artists" unselectable="on">Artists</em></dt>
                     <div class="x-clear"></div>
                 </dl>
             </div>

@@ -194,3 +194,8 @@ body {
     height: 24px;
     line-height: 24px;
 }
+
+/* fix for scrolling into albums table TODO : remove */
+#centerContainer > .x-panel-bwrap > .x-panel-body {
+    overflow-y: auto;
+}
