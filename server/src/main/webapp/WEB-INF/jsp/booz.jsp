@@ -365,16 +365,16 @@
                                 layout: 'border',
                                 items: [
                                     {
-                                        title: 'Home',
-                                        border: false,
-                                        region: 'north',
-                                        iconCls: 'home-icon',
-                                        contentEl: 'home'
-                                    },
-                                    {
                                         layout:'accordion',                                        
                                         region: 'center',
                                         items: [
+                                            {
+                                                title: 'Home',
+                                                region: 'north',
+                                                iconCls: 'home-icon',
+                                                contentEl: 'home'
+                                                hideCollapseTool: true,
+                                            },
                                             {
                                                 title: 'Playlists',
                                                 iconCls: 'playlists-icon',
