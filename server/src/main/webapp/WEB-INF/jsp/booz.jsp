@@ -372,8 +372,8 @@
                                                 title: 'Home',
                                                 region: 'north',
                                                 iconCls: 'home-icon',
-                                                contentEl: 'home'
-                                                hideCollapseTool: true,
+                                                contentEl: 'home',
+                                                hideCollapseTool: true
                                             },
                                             {
                                                 title: 'Playlists',
