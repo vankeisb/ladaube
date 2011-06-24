@@ -102,36 +102,16 @@ class UploaderUI {
             label(text:'Username', horizontalAlignment: SwingConstants.RIGHT)
             textField(id:'tfUserName', text: username)
             label(text:'Password', horizontalAlignment: SwingConstants.RIGHT)
-            passwordField(id:'tfPassword', text: password)
+            passwordField(id:'tfPassword', text: password, actionPerformed: {
+                login()
+            })
           }
           // south: buttons
           panel(constraints: BL.SOUTH, layout: new FlowLayout(FlowLayout.RIGHT)) {
-            button('Next...', actionPerformed: {
-              doLater {
-                url = swing.tfServerUrl.text
-                username = swing.tfUserName.text
-                password = swing.tfPassword.text
-
-                // create uploader and attempt to authenticate
-                uploader = new Uploader().
-                  url(url).
-                  username(username).
-                  password(password).
-                  addListeners([{ uploadEvent ->
-                          this.handleEvent(uploadEvent)
-                        }]).
-                  login()
-                if (uploader.isAuthenticated()) {
-                  // logged in, next page
-                  frame.contentPane.removeAll()
-                  frame.contentPane = createMainPanel()
-                  frame.title = "LaDaube upload tool - $username@$url"
-                  frame.resizable = true
-                  frame.pack()
-                }
-              }
+            button(id: 'btnNextLogin', 'Next...', actionPerformed: {
+              login()
             })
-            button('Cancel', actionPerformed: {
+            button(id:'btnCancelLogin', 'Cancel', actionPerformed: {
               doLater {
                 frame.dispose()
               }
@@ -146,6 +126,44 @@ class UploaderUI {
       frame.setVisible(true)
     }
   }
+
+    void setGuiEnabled(enabled) {
+        swing.tfServerUrl.enabled = enabled
+        swing.tfUserName.enabled = enabled
+        swing.tfPassword.enabled = enabled
+        swing.btnNextLogin.enabled = enabled
+        swing.btnCancelLogin.enabled = enabled
+    }
+
+    void login() {
+      setGuiEnabled(false)
+      swing.doLater {
+        url = swing.tfServerUrl.text
+        username = swing.tfUserName.text
+        password = swing.tfPassword.text
+
+        // create uploader and attempt to authenticate
+        uploader = new Uploader().
+          url(url).
+          username(username).
+          password(password).
+          addListeners([{ uploadEvent ->
+                  this.handleEvent(uploadEvent)
+                }]).
+          login()
+        if (uploader.isAuthenticated()) {
+          // logged in, next page
+          frame.contentPane.removeAll()
+          frame.contentPane = createMainPanel()
+          frame.title = "LaDaube upload tool - $username@$url"
+          frame.resizable = true
+          frame.pack()
+        } else {
+            setGuiEnabled(true)
+            swing.tfPassword.text = null
+        }
+      }
+    }
 
   private def setStatusText(String s) {
     swing.labelStatus.text = s

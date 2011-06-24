@@ -73,16 +73,22 @@ public class Uploader {
 
     // authentication request...
     String loginUrl = _url + "/login?login=true&json=true&username=$_username&password=$_password"
-    GetMethod firstReq = new GetMethod(loginUrl)
-    _httpClient.executeMethod(firstReq)
-    String response = firstReq.getResponseBodyAsString()
-    if (response.indexOf(_username)==-1) {
-      notifyListeners(new AuthenticationEvent(username: _username, success: false))
-      _httpClient = null
-      return this
+    try {
+        GetMethod firstReq = new GetMethod(loginUrl)
+        _httpClient.executeMethod(firstReq)
+        String response = firstReq.getResponseBodyAsString()
+        if (response.indexOf(_username)==-1) {
+          notifyListeners(new AuthenticationEvent(username: _username, success: false))
+          _httpClient = null
+          return this
+        }
+        notifyListeners(new AuthenticationEvent(username: _username, success:true))
+        return this
+    } catch(Exception e) {
+        notifyListeners(new AuthenticationEvent(username: _username, success: false))
+        _httpClient = null
+        return this
     }
-    notifyListeners(new AuthenticationEvent(username: _username, success:true))
-    return this
   }
 
   boolean isAuthenticated() {
