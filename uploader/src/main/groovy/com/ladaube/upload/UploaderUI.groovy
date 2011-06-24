@@ -16,6 +16,7 @@ import javax.swing.ImageIcon
 import java.awt.Color
 import javax.swing.JLabel
 import java.awt.Font
+import javax.swing.JFileChooser
 
 class UploaderUI {
 
@@ -85,6 +86,7 @@ class UploaderUI {
       }
 
       frame = swing.frame(
+              id: 'mainFrame',
               title : "LaDaube upload tool",
               defaultCloseOperation: WC.EXIT_ON_CLOSE,
               resizable: false) {
@@ -170,24 +172,36 @@ class UploaderUI {
           panel(layout: new BL(), constraints: BL.NORTH, border: BorderFactory.createEmptyBorder(5,5,5,0)) {
             panel(layout:new BL(), constraints: BL.CENTER) {
               label(text:'Base directory', constraints: BL.WEST)
-              textField(id: 'daTextField', constraints: BL.CENTER, text: '/Users/vankeisb/Music/iTunes/iTunes Music')
+              button(constraints:BL.CENTER, text: 'choose folder...', id:'btnChooseFolder', actionPerformed: {
+                  def chooser = swing.fileChooser(
+                    dialogTitle: 'Select a folder on your disk',
+                    fileSelectionMode:JFileChooser.DIRECTORIES_ONLY)
+                  int retVal = chooser.showOpenDialog(swing.mainFrame)
+                  if (retVal == JFileChooser.APPROVE_OPTION) {
+                      File f = chooser.getSelectedFile()
+                      baseDir = f.absolutePath
+                      swing.btnChooseFolder.text = baseDir
+                      swing.btnUp.enabled = true
+                  }
+              })
             }
             panel(layout:new BL(), constraints: BL.EAST) {
               panel(constraints: BL.CENTER, layout: new BL()) {
                 button(constraints: BL.CENTER, id: 'btnUp', text: 'Upload', enabled: false, actionPerformed: {
+                  if (!baseDir) {
+                      throw new IllegalStateException("You must select a base folder");
+                  }
                   swing.btnUp.enabled = false
                   swing.btnCancel.enabled = true
                   doOutside {
                     if (uploader==null) {
                       throw new IllegalStateException("uploader is null")
                     }
-
                     swing.daTable.model.clear()
                     nbUploaded = 0
                     nbErrors = 0
                     nbSkipped = 0
                     // call uploader
-                    baseDir = swing.daTextField.text
                     setStatusText('Uploading...')
                     uploader = new Uploader().
                       url(url).
@@ -244,7 +258,7 @@ class UploaderUI {
                   if (uploader) {
                     swing.btnCancel.enabled = false
                     uploader.stop()
-                    setStatusText('Cancelled upload')
+                    setStatusText('Stopping upload...')
                   }
                 })
               }                            
@@ -268,9 +282,6 @@ class UploaderUI {
     cm.getColumn(1).setHeaderValue('Status')
     cm.getColumn(1).setCellRenderer(cellRenderer)
 
-    swing.daTextField.enabled = true
-    swing.btnUp.enabled = true
-    
     return panel
   }
 
