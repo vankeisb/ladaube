@@ -437,4 +437,8 @@ class LaDaubeSession {
 
   }
 
+  def addDownloadStat(def track, def user) {
+    db.stats_downloads << [userId: user._id, date: new Date(), trackId: track._id]
+  }
+
 }

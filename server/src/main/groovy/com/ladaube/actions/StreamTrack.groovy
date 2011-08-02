@@ -35,7 +35,7 @@ class StreamTrack extends BaseAction {
     return LaDaube.doInSession { LaDaubeSession s->
       def t = s.getTrackForUser(track, u)
       if (t) {
-        s.db.stats_downloads << [userId: u._id, date: new Date(), trackId: t._id]
+        s.addDownloadStat(t, u)
         logger.debug("Streaming track $t._id")
 	      def trackInfos = s.getTrackInfos(t)
         return new StreamingResolution("audio/mpeg", trackInfos.is).setFilename(t.name + ".mp3").setLength(trackInfos.len)

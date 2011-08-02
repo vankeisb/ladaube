@@ -1,5 +1,7 @@
 package com.ladaube.model
 
+import com.mongodb.BasicDBObject
+
 class LadaubeSessionTest extends GroovyTestCase {
 
   protected void setUp() {
@@ -569,6 +571,48 @@ class LadaubeSessionTest extends GroovyTestCase {
       assertNotNull("frack not found for alex (he's a buddy)", s.getTrackForUser(remiTrack, "alex"))
     }
   }
+
+  void testGetTopTracks() {
+    createTracksAndUsers()
+    LaDaube.doInSession { LaDaubeSession s ->
+      def remi = s.getUser("remi")
+      def remiTrack = s.getUserTracks(remi, false, null).iterator().next()
+
+      // clear stats and create fake ones
+      def dl = s.db.stats_downloads
+      dl.remove([] as BasicDBObject)
+
+      s.addDownloadStat(remiTrack,remi)
+      s.addDownloadStat(remiTrack,remi)
+      s.addDownloadStat(remiTrack,remi)
+      s.addDownloadStat(remiTrack,remi)
+      s.addDownloadStat(remiTrack,remi)
+
+      def count = 0
+      s.getTopTracks { t,c,i ->
+        if (t == remiTrack) {
+          count = c
+        }
+      }
+
+      assert count==5
+
+      s.addDownloadStat(remiTrack,remi)
+
+      count = 0
+      s.getTopTracks { t,c,i ->
+        if (t == remiTrack) {
+          count = c
+        }
+      }
+
+      assert count==6
+
+    }
+
+  }
+
+
 
 
 

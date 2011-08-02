@@ -24,7 +24,7 @@ class TopTracks extends BaseAction {
         res.add([
             track: t,
             count: c.intValue(),
-            index: i
+            index: i + 1
         ]);
         return false
       }
