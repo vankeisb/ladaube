@@ -153,6 +153,13 @@
                 store.load();
             };
 
+            window.ladaube = {};
+            window.ladaube.doFilter = function(crit) {
+                displayAllTracks(true);
+                doFilter(crit);
+                mode = 0;
+            };
+
             var bannerPanel = new Ext.Panel({
                 height: 60,
                 region: 'north',

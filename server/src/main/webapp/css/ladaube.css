@@ -1,4 +1,4 @@
-.x-list-over {
+.x-list-over, #stats a:hover {
     background-color: #DFE8F6;
     text-decoration: underline;
 }
@@ -198,4 +198,14 @@ body {
 /* fix for scrolling into albums table TODO : remove */
 #centerContainer > .x-panel-bwrap > .x-panel-body {
     overflow-y: auto;
+}
+
+.stats {
+    width:100%;
+    font: 11px arial,tahoma,helvetica,sans-serif;
+}
+
+.stats a:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }

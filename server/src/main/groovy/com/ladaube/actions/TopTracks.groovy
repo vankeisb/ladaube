@@ -23,7 +23,7 @@ class TopTracks extends BaseAction {
       s.getTopTracks { t,c,i ->
         res.add([
             track: t,
-            count: c,
+            count: c.intValue(),
             index: i
         ]);
         return false
