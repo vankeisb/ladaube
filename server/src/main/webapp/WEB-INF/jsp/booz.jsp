@@ -300,7 +300,7 @@
             });
 
             var selectedPlaylistIndex = -1;
-            var mode = 0; // 0==library, 1==playlist, 2==buddy (needed for popup on tracks grid), 3==albums, 4==artists
+            var mode = 0; // 0==library, 1==playlist, 2==buddy (needed for popup on tracks grid), 3==albums, 4==artists, 5==stats
 
             var playlistsGrid = new Ext.ListView({
                 store: playlistsStore,
@@ -445,7 +445,8 @@
             var albumsEm = Ext.get('albums');
             var artistsEm = Ext.get('artists');
             var libraryEm = Ext.get('library');
-            var ems = [albumsEm, artistsEm, libraryEm];
+            var statsEm = Ext.get('stats');
+            var ems = [albumsEm, artistsEm, libraryEm, statsEm];
             for (var i=0 ; i<ems.length ; i++) {
                 ems[i].on('mouseover', function() {
                     this.addClass('x-list-over');
@@ -463,6 +464,9 @@
             }, this);
             albumsEm.on('click', function() {
                 displayAllAlbums();
+            }, this);
+            statsEm.on('click', function() {
+                displayStats();
             }, this);
 
             var albumsStore = new Ext.data.JsonStore({
@@ -537,34 +541,49 @@
             centerContainer.add(artistsGrid);
             artistsGrid.hide();
 
-            var displayAllAlbums = function() {
-                tracksGrid.hide();
-                artistsGrid.hide();
-                centerContainer.setTitle("Albums");
-                albumsGrid.show();
+            // Stats panel
+            // -----------
+
+            var statsPanel = new Ext.Panel({});
+            centerContainer.add(statsPanel);
+            statsPanel.hide();
+
+            var allPanels = [
+                tracksGrid,
+                albumsGrid,
+                artistsGrid,
+                statsPanel
+            ];
+
+            var showPanel = function(p,title) {
+                for (var i=0;i<allPanels.length;i++) {
+                    if (allPanels[i]!=p) {
+                        allPanels[i].hide();
+                    }
+                }
+                p.show();
                 centerContainer.doLayout(true, true);
+                if (title) {
+                    centerContainer.setTitle(title);
+                }
+            };
+
+            var displayAllAlbums = function() {
+                showPanel(albumsGrid, "Albums");
                 albumsStore.load();
                 // set mode to "albums"
                 mode = 3;
             };
 
             var displayAllArtists = function() {
-                tracksGrid.hide();
-                albumsGrid.hide();
-                centerContainer.setTitle("Artists");
-                artistsGrid.show();
-                centerContainer.doLayout(true, true);
+                showPanel(artistsGrid, "Artists");
                 artistsStore.load();
                 // set mode to "artists"
                 mode = 0;
             };
 
             var displayAllTracks = function(skipLoad) {
-                albumsGrid.hide();
-                artistsGrid.hide();
-                centerContainer.setTitle("Tracks");
-                tracksGrid.show();
-                centerContainer.doLayout(true, true);
+                showPanel(tracksGrid, "Tracks");
                 if (!skipLoad) {
                     store.setBaseParam('playlistId', null);
                     store.setBaseParam('buddyId', null);
@@ -572,6 +591,19 @@
                 }
                 // set mode to "library"
                 mode = 0;
+            };
+
+            var displayStats = function() {
+                showPanel(statsPanel, "Stats");
+                statsPanel.load({
+                    url: "${pageContext.request.contextPath}/topTracks",
+                    callback: function() { mode = 5; },
+//                    nocache: true,
+                    text: "Loading...",
+                    timeout: 30,
+                    scripts: false
+                });
+                mode = 5;
             };
 
             /****
@@ -728,6 +760,7 @@
                     <dt style="width: 100%; text-align: left;"><em id="library" unselectable="on">Tracks</em></dt>
                     <dt style="width: 100%; text-align: left;"><em id="albums" unselectable="on">Albums</em></dt>
                     <dt style="width: 100%; text-align: left;"><em id="artists" unselectable="on">Artists</em></dt>
+                    <dt style="width: 100%; text-align: left;"><em id="stats" unselectable="on">Stats</em></dt>
                     <div class="x-clear"></div>
                 </dl>
             </div>

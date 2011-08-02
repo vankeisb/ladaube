@@ -406,4 +406,35 @@ class LaDaubeSession {
     }
     return null
   }
+
+  def getTopTracks(Closure callback) {
+    // map/reduce on the downloads collection
+    db.stats_downloads.mapReduce(
+      """
+      function map() {
+          emit(this.trackId, 1)
+      }
+      """,
+      """
+      function reduce(key, values) {
+          var count = 0
+          for (var i = 0; i < values.length; i++)
+              count += values[i]
+          return count
+      }
+      """,
+      "trackscount",
+      [:] // No Query
+    )
+
+    // query map/reduce result and invoke callback for the tracks
+    int nbTracks = 0
+    db.trackscount.find().sort([value:-1] as BasicDBObject).find { tc ->
+      def track = getTrack(tc._id)
+      def count = tc.value
+      return callback.call([track, count, nbTracks++])
+    }
+
+  }
+
 }
