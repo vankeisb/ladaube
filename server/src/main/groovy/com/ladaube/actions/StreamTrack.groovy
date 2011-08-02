@@ -37,12 +37,12 @@ class StreamTrack extends BaseAction {
       if (t) {
         s.db.stats_downloads << [userId: u._id, date: new Date(), trackId: t._id]
         logger.debug("Streaming track $t._id")
-	    def trackInfos = s.getTrackInfos(t)
+	      def trackInfos = s.getTrackInfos(t)
         return new StreamingResolution("audio/mpeg", trackInfos.is).setFilename(t.name + ".mp3").setLength(trackInfos.len)
       } else {
         logger.warn("unable to get track $track for user ${u.username}")
+        return null
       }
-      return null
     }
   }
 
