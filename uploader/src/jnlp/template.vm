@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp
     spec="1.0+"
-    codebase="http://babz.hd.free.fr/ladaube/webstart/"
+    codebase="http://88.190.205.177:8080/ladaube/webstart/"
     href="$outputFile">
   <information>
     <vendor>LaDaube</vendor>
     <title>LaDaube Uploader</title>
-    <homepage href="http://rvkb.dyndns.info/ladaube"/>
+    <homepage href="http://88.190.205.177:8080/ladaube"/>
     <description kind="one-line">LaDaube mass upload tool.</description>
     <description kind="short">Allows to upload your local mp3s to your LaDaube account.
                    Blah blah.</description>

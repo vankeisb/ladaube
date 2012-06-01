@@ -10,6 +10,10 @@ public class JsonUtil {
     return new StreamingResolution('text/json', jsonData)
   }
 
+    StreamingResolution resolution(JSONObject obj) {
+      return new StreamingResolution('text/json', obj.toString())
+    }
+
   JSONObject userToJson(def u) {
     JSONObject o = new JSONObject()
     o.put('id', u.username)

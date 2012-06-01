@@ -737,6 +737,48 @@
             }
 
             displayAllTracks();
+
+            var userAccountWindow = new Ext.Window({
+                title:"User account",
+                modal: true,
+                contentEl: "accountDetails",
+                width:400
+            });
+
+            // user account handling
+            Ext.get("userLink").on("click", function() {
+                userAccountWindow.show();
+            });
+
+            var saveUserDetailsBtn = Ext.get("saveUserDetails");
+
+            saveUserDetailsBtn.on("click", function() {
+                var email = Ext.get("email").getValue();
+                var pwd1 = Ext.get("password1").getValue();
+                var pwd2 = Ext.get("password2").getValue();
+                Ext.Ajax.request({
+                    url:'user',
+                    params: {
+                        save: true,
+                        email: email,
+                        pwd1: pwd1,
+                        pwd2: pwd2
+                    },
+                    failure: function() {
+                        alert('error !');
+                    },
+                    success: function(response) {
+                        var data = Ext.util.JSON.decode(response.responseText);
+                        if (data.error) {
+                            alert('error !');
+                        } else {
+                            Ext.example.msg('Saved', 'Your account details have been saved');
+                            userAccountWindow.hide();
+                        }
+                    }
+                });
+            });
+
         });
     </script>
 
@@ -806,14 +848,49 @@
             </div>
         </div>
     </div>
-
-    </div>
 </div>
+
 <div id="loginBox" class="x-hidden">
     <p>
-        Logged in as <span class="loginName">${actionBean.user.username}</span>
+        Logged in as
+        <span class="loginName">
+            <a id="userLink" title="View account details">${actionBean.user.username}</a>
+        </span>
         - <a href="${pageContext.request.contextPath}/login?logout=true">logout</a>
     </p>
+</div>
+
+<div id="accountDetails" class="x-hidden">
+    <h1>
+        General info
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>Email</td>
+            <td><input type="text" id="email" value="${actionBean.user.email}"/></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h1>
+        Change password
+    </h1>
+    <table>
+        <tbody>
+        <tr>
+            <td>New password</td>
+            <td><input type="password" id="password1"/></td>
+        </tr>
+        <tr>
+            <td>Confirm</td>
+            <td><input type="password" id="password2"/></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button type="button" id="saveUserDetails">Save</button>
+
 </div>
 
 </body>

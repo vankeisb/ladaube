@@ -210,6 +210,7 @@ class UploaderUI {
                       throw new IllegalStateException("You must select a base folder");
                   }
                   swing.btnUp.enabled = false
+                  swing.btnChooseFolder.enabled = false
                   swing.btnCancel.enabled = true
                   doOutside {
                     if (uploader==null) {
@@ -268,6 +269,8 @@ class UploaderUI {
                     doLater {
                       swing.btnUp.enabled = true
                       swing.btnCancel.enabled = false
+                      swing.btnChooseFolder.enabled = true
+
                     }
                     setStatusText("Finished : $nbUploaded track(s) uploaded, $nbSkipped skipped, $nbErrors errors")
                   }
@@ -275,6 +278,7 @@ class UploaderUI {
                 button(constraints: BL.EAST, id: 'btnCancel', text: 'Stop', enabled: false, actionPerformed: {
                   if (uploader) {
                     swing.btnCancel.enabled = false
+                    swing.btnChooseFolder.enabled = false
                     uploader.stop()
                     setStatusText('Stopping upload...')
                   }
@@ -306,7 +310,7 @@ class UploaderUI {
   private static final String LAF = "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel";
 
   public static void main(String[] args) {    
-    UploaderUI ui = new UploaderUI(url: 'http://babz.hd.free.fr/ladaube', username: '', password: '')
+    UploaderUI ui = new UploaderUI(url: 'http://88.190.205.177:8080/ladaube', username: '', password: '')
     ui.display()
   }
 }
