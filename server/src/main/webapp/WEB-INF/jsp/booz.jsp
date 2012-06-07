@@ -854,7 +854,7 @@
     <p>
         Logged in as
         <span class="loginName">
-            <a id="userLink" title="View account details">${actionBean.user.username}</a>
+            <a href="#" id="userLink" title="View account details">${actionBean.user.username}</a>
         </span>
         - <a href="${pageContext.request.contextPath}/login?logout=true">logout</a>
     </p>
