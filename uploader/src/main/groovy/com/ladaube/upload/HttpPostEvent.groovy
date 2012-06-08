@@ -2,26 +2,32 @@ package com.ladaube.upload
 
 class HttpPostEvent extends BaseEvent {
 
-  // true=>track, false=>image
-  boolean isTrack
+    // true=>track, false=>image
+    boolean isTrack
 
-  String fileName
+    String fileName
 
-  long postEventId
+    long postEventId
 
-  // true -> upload finished, false -> upload starting
-  boolean isCompleted = false
+    long uploaded = -1
 
-  // set when upload has completed successfuly
-  String trackId
+    long totalSize = -1
 
-  public String toString() {
+    // true -> upload finished, false -> upload starting
+    boolean isCompleted = false
+
+    // set when upload has completed successfuly
+    String trackId
+
+    public String toString ( ) {
     return "HttpPostEvent{" +
-            "isTrack=" + isTrack +
-            ", fileName='" + fileName + '\'' +
-            ", postEventId=" + postEventId +
-            ", isCompleted=" + isCompleted +
-            ", trackId='" + trackId + '\'' +
-            '}';
-  }
+    "isTrack=" + isTrack +
+    ", fileName='" + fileName + '\'' +
+    ", postEventId=" + postEventId +
+    ", uploaded=" + uploaded +
+    ", totalSize=" + totalSize +
+    ", isCompleted=" + isCompleted +
+    ", trackId='" + trackId + '\'' +
+    '}' ;
+    }
 }

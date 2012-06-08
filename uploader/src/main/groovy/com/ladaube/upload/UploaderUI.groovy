@@ -74,16 +74,16 @@ class UploaderUI {
 
   void display() {
     swing.doLater {
-      try {
-          for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-              if ("Nimbus".equals(info.getName())) {
-                  UIManager.setLookAndFeel(info.getClassName());
-                  break;
-              }
-          }
-      } catch (Exception e) {
-          println 'Nimbus is not available.' 
-      }
+//      try {
+//          for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+//              if ("Nimbus".equals(info.getName())) {
+//                  UIManager.setLookAndFeel(info.getClassName());
+//                  break;
+//              }
+//          }
+//      } catch (Exception e) {
+//          println 'Nimbus is not available.'
+//      }
 
       frame = swing.frame(
               id: 'mainFrame',
@@ -296,18 +296,15 @@ class UploaderUI {
       }
     }
 
-    def cellRenderer = new UploaderTableCellRenderer(this)
     def cm = swing.daTable.columnModel
     cm.getColumn(0).setHeaderValue('File')
     cm.getColumn(0).setPreferredWidth(300)
-    cm.getColumn(0).setCellRenderer(cellRenderer)
+    cm.getColumn(0).setCellRenderer(new UploaderTableCellRenderer(this))
     cm.getColumn(1).setHeaderValue('Status')
-    cm.getColumn(1).setCellRenderer(cellRenderer)
+    cm.getColumn(1).setCellRenderer(new UploaderProgressTableCellRenderer(this))
 
     return panel
   }
-
-  private static final String LAF = "org.jvnet.substance.skin.SubstanceBusinessLookAndFeel";
 
   public static void main(String[] args) {    
     UploaderUI ui = new UploaderUI(url: 'http://88.190.205.177:8080/ladaube', username: '', password: '')
