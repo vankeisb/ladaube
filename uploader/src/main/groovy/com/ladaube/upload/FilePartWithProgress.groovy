@@ -15,7 +15,7 @@ class FilePartWithProgress extends FilePart {
     private Uploader uploader
     private String fileName
 
-    FilePartWithProgress(String name, File file, int postEventId, Uploader uploader) {
+    FilePartWithProgress(String name, File file, int postEventId, Uploader uploader) throws FileNotFoundException{
         super(name, file)
         this.postEventId = postEventId
         this.uploader = uploader
@@ -37,17 +37,21 @@ class FilePartWithProgress extends FilePart {
         }
 
         byte[] tmp = new byte[4096];
-        InputStream instream = source.createInputStream();
         try {
-            int len;
-            while ((len = instream.read(tmp)) >= 0) {
-                out.write(tmp, 0, len);
-                uploaded += len;
-                onProgress();
+            InputStream instream = source.createInputStream();
+            try {
+                int len;
+                while ((len = instream.read(tmp)) >= 0) {
+                    out.write(tmp, 0, len);
+                    uploaded += len;
+                    onProgress();
+                }
+            } finally {
+                // we're done with the stream, close it
+                instream.close();
             }
-        } finally {
-            // we're done with the stream, close it
-            instream.close();
+        } catch(Exception e) {
+            throw new RuntimeException(e)
         }
     }
 
