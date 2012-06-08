@@ -95,7 +95,7 @@ public class Uploader {
         return _httpClient != null
     }
 
-    private void notifyListeners(BaseEvent evt) {
+    void notifyListeners(BaseEvent evt) {
         _listeners.each { l ->
             l.call(evt)
         }
@@ -134,7 +134,7 @@ public class Uploader {
 
                 // check max file size : don't try to upload files that are too big
                 int len = f.length()
-                if (len>50000000) {
+                if (len > 50000000) {
                     // file too big
                     notifyListeners(new ErrorEvent(fileName: f.absolutePath, reason: new RuntimeException("File too big")))
                 } else {
@@ -162,7 +162,7 @@ public class Uploader {
                             String trackId
                             try {
                                 Part[] parts = [
-                                        new FilePart("data", f),
+                                        new FilePartWithProgress("data", f, postEventId, this),
                                         new StringPart("upload", "true"),
                                         new StringPart("json", "true")]
                                 filePost.setRequestEntity(new MultipartRequestEntity(parts, filePost.getParams()));
